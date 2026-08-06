@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Allow: /instruction.html
+
+Sitemap: https://govadik.github.io/wb-profit-calc/sitemap.xml
