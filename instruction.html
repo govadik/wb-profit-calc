@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Инструкция — WB Калькулятор прибыли</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 20px;
+    color: #1a1a2e;
+    line-height: 1.6;
+  }
+  .app {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    padding: 32px;
+    text-align: center;
+  }
+  .header h1 { font-size: 26px; margin-bottom: 8px; }
+  .header p { color: #94a3b8; font-size: 15px; }
+  .content { padding: 32px; }
+  .badge {
+    display: inline-block;
+    background: rgba(123,44,191,0.9);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin: 32px 0 14px 0;
+    color: #1a1a2e;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  h2:first-child { margin-top: 0; }
+  h3 {
+    font-size: 16px;
+    margin: 22px 0 10px 0;
+    color: #334155;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: #7b2cbf;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+  }
+  .step-body { flex: 1; }
+  .step-body strong { color: #1e3a8a; }
+
+  .info-box {
+    background: linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%);
+    border-left: 4px solid #3b82f6;
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #1e40af;
+  }
+  .warn-box {
+    background: linear-gradient(90deg, #fef3c7 0%, #fffbeb 100%);
+    border-left: 4px solid #f59e0b;
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #92400e;
+  }
+  .ok-box {
+    background: linear-gradient(90deg, #dcfce7 0%, #f0fdf4 100%);
+    border-left: 4px solid #22c55e;
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #166534;
+  }
+
+  ul, ol { margin-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; }
+
+  .screenshot-placeholder {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  th {
+    background: #f1f5f9;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid #cbd5e1;
+    font-weight: 700;
+    color: #334155;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  tr:hover td { background: #f8fafc; }
+
+  code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+    color: #7b2cbf;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 24px;
+    color: #94a3b8;
+    font-size: 13px;
+    border-top: 1px solid #e2e8f0;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="badge">ВБшка</div>
+    <h1>📘 Инструкция по использованию</h1>
+    <p>WB Калькулятор чистой прибыли — бесплатно, без API, без подписки</p>
+  </div>
+
+  <div class="content">
+
+    <div class="ok-box">
+      <strong>Главное преимущество:</strong> калькулятор работает полностью в вашем браузере. Данные не уходят на сервер, не требуется API-ключ и никаких подписок.
+    </div>
+
+    <h2>🚀 Быстрый старт</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Скачайте детализацию отчёта из ЛК Wildberries</strong>
+        <p>Перейдите: <strong>Личный кабинет → Финансы → Финансовые отчёты → Детализация → Скачать Excel</strong></p>
+        <div class="screenshot-placeholder">📁 Скачайте файл .xlsx с детализацией еженедельного отчёта</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Загрузите файл в калькулятор</strong>
+        <p>Перетащите файл в область загрузки или нажмите «Выбрать файл». Калькулятор автоматически распознает колонки и сгруппирует данные по артикулам.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Введите закупочную цену (себестоимость) за 1 шт.</strong>
+        <p>Жёлтые ячейки в колонке <strong>«Себестоимость»</strong> — единственное, что нужно заполнить вручную. Введите цену закупки одной единицы товара. Прибыль и маржа посчитаются автоматически.</p>
+      </div>
+    </div>
+
+    <h2>📊 Что показывает таблица</h2>
+
+    <table>
+      <tr><th>Колонка</th><th>Что это</th></tr>
+      <tr><td>Артикул поставщика</td><td>Ваш SKU из ЛК WB</td></tr>
+      <tr><td>Код номенклатуры</td><td>Внутренний код WB</td></tr>
+      <tr><td>Название</td><td>Наименование товара</td></tr>
+      <tr><td>Кол-во</td><td>Реализованное количество (с учётом возвратов)</td></tr>
+      <tr><td>Выручка</td><td>Общая сумма продаж</td></tr>
+      <tr><td>К перечислению</td><td>Сумма, которую WB готов перечислить (уже за вычетом комиссии и эквайринга)</td></tr>
+      <tr><td style="background:#fef3c7;">Себестоимость</td><td>Ваша закупочная цена за 1 шт. — <strong>вводите сюда</strong></td></tr>
+      <tr><td>Прибыль</td><td>Чистая прибыль по артикулу</td></tr>
+      <tr><td>Маржа</td><td>Рентабельность в процентах</td></tr>
+      <tr><td>Комиссия</td><td>Вознаграждение WB</td></tr>
+      <tr><td>Логистика</td><td>Услуги по доставке</td></tr>
+      <tr><td>Хранение</td><td>Стоимость хранения на складах WB</td></tr>
+      <tr><td>Штрафы</td><td>Санкции WB</td></tr>
+      <tr><td>Эквайринг</td><td>Комиссия за платёжные сервисы</td></tr>
+      <tr><td>Прочие удержания</td><td>Операции на приёмке, программа лояльности, корректировки</td></tr>
+    </table>
+
+    <h2>💰 Как считается прибыль</h2>
+
+    <div class="info-box">
+      <strong>Если в файле есть колонка «К перечислению» (стандартный отчёт WB):</strong><br>
+      <code>Прибыль = К перечислению − Логистика − Хранение − Штрафы − Прочие удержания − (Себестоимость × Кол-во)</code>
+    </div>
+
+    <div class="info-box">
+      <strong>Если колонки «К перечислению» нет (упрощённый файл):</strong><br>
+      <code>Прибыль = Выручка − Комиссия − Логистика − Хранение − Штрафы − Эквайринг − Прочие удержания − (Себестоимость × Кол-во)</code>
+    </div>
+
+    <h2>📥 Работа с закупочными ценами</h2>
+
+    <h3>💾 Сохранение цен</h3>
+    <p>Себестоимость автоматически сохраняется в браузере. При следующей загрузке отчёта цены подставятся сами — не нужно вводить заново.</p>
+
+    <h3>📤 Выгрузить цены в Excel</h3>
+    <p>Кнопка <strong>«💰 Цены → Excel»</strong> создаёт файл с колонками: Название / Артикул / Код номенклатуры / Себестоимость. Удобно, если хотите вести учёт цен отдельно или передать бухгалтеру.</p>
+
+    <h3>📥 Загрузить цены из Excel</h3>
+    <p>Кнопка <strong>«📥 Цены ← Excel»</strong> загружает файл обратно. Формат тот же: можно отредактировать цены в Excel и загрузить обновлённый файл — калькулятор подставит их в таблицу.</p>
+
+    <div class="warn-box">
+      <strong>Важно:</strong> при передаче самого HTML-файла другому продавцу ваши цены и данные <strong>не передаются</strong> — они хранятся только в вашем браузере. Передаётся чистый калькулятор.
+    </div>
+
+    <h2>📋 История отчётов</h2>
+
+    <p>Внизу страницы есть таблица <strong>«История»</strong>. Чтобы сохранить текущий отчёт:</p>
+    <ol>
+      <li>Укажите <strong>номер отчёта</strong> (подсказка: калькулятор пытается угадать его из названия файла).</li>
+      <li>Укажите <strong>дату / период</strong> (автоматически берётся из файла).</li>
+      <li>Нажмите <strong>«Сохранить в историю»</strong>.</li>
+    </ol>
+
+    <p>Теперь вы можете сравнивать отчёты за разные недели, отслеживать динамику прибыли и выгружать историю в CSV.</p>
+
+    <h2>⚙️ Дополнительные возможности</h2>
+
+    <table>
+      <tr><th>Кнопка</th><th>Действие</th></tr>
+      <tr><td>➕ Добавить</td><td>Добавить пустую строку вручную (для тестов или артикулов вне WB)</td></tr>
+      <tr><td>📊 Демо</td><td>Загрузить тестовые данные, чтобы посмотреть, как работает калькулятор</td></tr>
+      <tr><td>📤 CSV</td><td>Выгрузить текущую таблицу с прибылью в CSV-файл</td></tr>
+      <tr><td>🗑 Очистить</td><td>Удалить все строки из текущей таблицы</td></tr>
+      <tr><td>🗑 Полная очистка</td><td>Удалить все цены и всю историю (безвозвратно)</td></tr>
+    </table>
+
+    <h2>❓ Частые вопросы</h2>
+
+    <h3>Мои данные куда-то уходят?</h3>
+    <p><strong>Нет.</strong> Всё считается локально в вашем браузере. Файл не отправляется на сервер, не требуется интернет-подключение после загрузки страницы.</p>
+
+    <h3>Почему прибыль не совпадает с ЛК WB?</h3>
+    <p>Проверьте:</p>
+    <ul>
+      <li>Правильно ли указана себестоимость (цена за 1 шт., а не за партию).</li>
+      <li>Учтены ли возвраты — калькулятор автоматически вычитает возвраты, если в отчёте есть колонка «Тип документа».</li>
+      <li>Если в отчёте нет колонки «К перечислению», используется альтернативная формула — об этом будет предупреждение.</li>
+    </ul>
+
+    <h3>Можно ли работать с несколькими отчётами одновременно?</h3>
+    <p>Да. Загрузите первый отчёт, сохраните его в историю, затем загрузите второй. Или откройте калькулятор в разных вкладках браузера.</p>
+
+    <h3>Что делать, если калькулятор не распознал колонки?</h3>
+    <p>Убедитесь, что загружен именно <strong>еженедельный финансовый отчёт с детализацией</strong> из ЛК WB. Если структура файла изменилась — напишите автору.</p>
+
+    <h3>Работает на телефоне?</h3>
+    <p>Да, интерфейс адаптирован под мобильные экраны, но для работы с большими отчётами удобнее использовать компьютер.</p>
+
+    <h2>💡 Советы</h2>
+
+    <ul>
+      <li><strong>Заполняйте себестоимость сразу</strong> после первой загрузки — тогда при следующих отчётах прибыль будет считаться автоматически.</li>
+      <li><strong>Сохраняйте отчёты в историю</strong> — так вы увидите тренды: растёт ли прибыль, растут ли расходы на логистику.</li>
+      <li><strong>Смотрите на маржу, а не только на прибыль в рублях</strong> — артикул с прибылью 5 000 ₽ и маржой 5% хуже, чем артикул с прибылью 3 000 ₽ и маржой 30%.</li>
+      <li><strong>Обращайте внимание на «Прочие удержания»</strong> — туда попадают скрытые расходы (приёмка, лояльность, корректировки), которые легко упустить.</li>
+    </ul>
+
+    <div class="ok-box">
+      <strong>Есть вопросы или предложения?</strong><br>
+      Связь с автором: <strong>govadik@gmail.com</strong>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    WB Калькулятор чистой прибыли — бесплатный инструмент для продавцов Wildberries
+  </div>
+</div>
+
+</body>
+</html>
