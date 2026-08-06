@@ -3,9 +3,9 @@
 Бесплатный калькулятор для продавцов Wildberries.  
 Без API-ключа, без подписки, без передачи данных третьим лицам.
 
-**[🚀 Открыть калькулятор](https://ВАШ-НИК.github.io/wb-profit-calc/)**
+**[🚀 Открыть калькулятор](https://govadik.github.io/wb-profit-calc/)**
 
-**[📘 Инструкция](https://ВАШ-НИК.github.io/wb-profit-calc/instruction.html)**
+**[📘 Инструкция](https://govadik.github.io/wb-profit-calc/instruction.html)**
 
 ## Как пользоваться
 
