@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WB Калькулятор прибыли</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 20px;
+    color: #1a1a2e;
+  }
+  .app {
+    max-width: 1550px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+  .logo-svg {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+  }
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-text h1 { font-size: 22px; margin-bottom: 2px; }
+  .logo-text .vm-badge {
+    display: inline-block;
+    background: rgba(123,44,191,0.9);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    width: fit-content;
+  }
+  .header p { color: #94a3b8; font-size: 13px; margin-top: 4px; }
+  .header { justify-content: space-between; }
+  .donate-header-btn { margin-left: auto; flex-shrink: 0; white-space: nowrap; }
+  .content { padding: 28px 32px; }
+
+  .hint-box {
+    background: linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%);
+    border-left: 4px solid #3b82f6;
+    padding: 14px 18px;
+    border-radius: 0 12px 12px 0;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #1e40af;
+    line-height: 1.6;
+  }
+  .hint-box strong { color: #1e3a8a; }
+
+  .upload-area {
+    border: 2px dashed #cbd5e1;
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+    background: #f8fafc;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .upload-area:hover, .upload-area.dragover {
+    border-color: #7b2cbf;
+    background: #faf5ff;
+  }
+  .upload-area h3 { color: #334155; margin-bottom: 8px; font-size: 16px; }
+  .upload-area p { color: #64748b; font-size: 13px; margin-bottom: 12px; }
+  .upload-area input { display: none; }
+  .btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: #7b2cbf; color: white; }
+  .btn-primary:hover { background: #5a1e8f; }
+  .btn-secondary { background: #e2e8f0; color: #334155; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .btn-success { background: #059669; color: white; }
+  .btn-success:hover { background: #047857; }
+  .btn-danger { background: #fee2e2; color: #991b1b; }
+  .btn-danger:hover { background: #fecaca; }
+
+  .paste-area { margin-bottom: 20px; }
+  .paste-area label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 8px;
+  }
+  .paste-box {
+    width: 100%;
+    min-height: 100px;
+    padding: 14px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: monospace;
+    resize: vertical;
+    background: #f8fafc;
+  }
+  .paste-box:focus { outline: none; border-color: #7b2cbf; background: white; }
+
+  .formula-bar {
+    padding: 10px 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    display: none;
+  }
+  .formula-bar.show { display: block; }
+  .formula-bar.ok { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+  .formula-bar.warn { background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    border-top: 3px solid #7b2cbf;
+  }
+  .card-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; margin-bottom: 6px; }
+  .card-value { font-size: 22px; font-weight: 800; color: #0f172a; }
+  .card-value.pos { color: #059669; }
+  .card-value.neg { color: #dc2626; }
+
+  .table-container { border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+  .table-toolbar {
+    padding: 14px 18px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .table-toolbar span { font-size: 13px; color: #64748b; margin-right: auto; }
+  .table-wrap { overflow: auto; max-height: 600px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1050px; }
+  th {
+    background: #f1f5f9;
+    color: #334155;
+    font-weight: 700;
+    padding: 12px 8px;
+    text-align: right;
+    border-bottom: 2px solid #cbd5e1;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+  }
+  th:first-child { text-align: left; min-width: 110px; }
+  
+  th:nth-child(2), td:nth-child(2) { text-align: left; width: 90px; min-width: 90px; max-width: 90px; }
+  th:nth-child(3), td:nth-child(3) { text-align: left; min-width: 180px; }
+  th:nth-child(4), td:nth-child(4) { width: 55px; min-width: 55px; max-width: 55px; }
+  th:nth-child(5), td:nth-child(5) { width: 100px; min-width: 100px; }
+  th:nth-child(6), td:nth-child(6) { width: 120px; min-width: 120px; }
+  th:nth-child(7), td:nth-child(7) { width: 100px; min-width: 100px; }
+  th:nth-child(10), td:nth-child(10),
+  th:nth-child(11), td:nth-child(11) { width: 75px; min-width: 75px; }
+  th:nth-child(12), td:nth-child(12) { width: 50px; min-width: 50px; max-width: 50px; }
+  th:nth-child(13), td:nth-child(13) { width: 50px; min-width: 50px; max-width: 50px; }
+  th:nth-child(14), td:nth-child(14),
+  th:nth-child(15), td:nth-child(15) { width: 75px; min-width: 75px; }
+  td { padding: 8px; border-bottom: 1px solid #f1f5f9; text-align: right; vertical-align: middle; }
+  td:first-child { text-align: left; min-width: 110px; }
+  
+  tr:hover td { background: #f8fafc; }
+  tr:hover .del-btn { opacity: 1; }
+  .cell-input {
+    width: 100%;
+    padding: 5px 7px;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    font-size: 13px;
+    text-align: right;
+    background: white;
+  }
+  .cell-input:focus { outline: none; border-color: #7b2cbf; }
+  .cell-input.text-left { text-align: left; }
+  .cell-input.cost {
+    background: #fffbeb;
+    border-color: #fbbf24;
+    font-weight: 700;
+  }
+  .cell-input.cost:focus { background: white; border-color: #f59e0b; }
+  .profit { font-weight: 800; }
+  .profit-pos { color: #059669; }
+  .profit-neg { color: #dc2626; }
+  .profit-zero { color: #94a3b8; }
+  .del-btn {
+    opacity: 0;
+    cursor: pointer;
+    color: #cbd5e1;
+    font-size: 18px;
+    background: none;
+    border: none;
+    padding: 2px 6px;
+  }
+  .del-btn:hover { color: #dc2626; }
+  .total-row { background: #f1f5f9 !important; font-weight: 700; }
+  .total-row td { border-top: 2px solid #94a3b8; font-size: 14px; }
+  .empty-state { text-align: center; padding: 50px; color: #94a3b8; }
+  .expense-row td { border-top: 1px dashed #cbd5e1; background: #fff7ed; font-size: 13px; }
+  .expense-row td:first-child { border-top: 1px dashed #cbd5e1; }
+  .empty-state h3 { color: #64748b; margin-bottom: 8px; }
+
+  .status-msg {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .status-msg.show { display: block; }
+  .status-ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .status-warn { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+  .status-err { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+  .cell-input[readonly] {
+    background: #f1f5f9;
+    border-color: transparent;
+    color: #64748b;
+    cursor: default;
+  }
+  .cell-input[readonly]:focus {
+    outline: none;
+    border-color: transparent;
+    background: #f1f5f9;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="logo-wrap">
+      <!-- Wildberries Logo SVG -->
+      <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" rx="20" fill="#7b2cbf"/>
+        <text x="50" y="58" text-anchor="middle" fill="white" font-family="Arial Black, Arial, sans-serif" font-size="38" font-weight="900">WB</text>
+        <circle cx="82" cy="18" r="8" fill="#fbbf24"/>
+      </svg>
+      <div class="logo-text">
+        <h1>Калькулятор чистой прибыли</h1>
+        <span class="vm-badge">ВБшка</span>
+        <p>Имя автора - Вадим Макаров версия 1.1<br>Связь с автором: govadik@gmail.com</p>
+        <p>Загружайте еженедельный отчёт из личного кабинета — без API-ключа</p>
+      </div>
+    </div>
+    <button class="btn btn-success donate-header-btn" onclick="toggleDonate()">💝 Отблагодарить</button>
+  </div>
+
+  <div class="content">
+    <div class="hint-box">
+      <strong>Как пользоваться:</strong>
+      <ol style="margin-top:6px; padding-left:18px;">
+        <li>Скачайте <strong>детализацию</strong> еженедельного отчёта в ЛК WB (Финансы → Финансовые отчёты → Детализация → Скачать Excel)</li>
+        <li>Перетащите файл сюда <strong>или</strong> скопируйте данные из Excel и вставьте (Ctrl+V) в поле ниже</li>
+        <li>В жёлтые ячейки введите закупочную цену за 1 шт. — прибыль посчитается автоматически</li>
+        <li>Кнопка «💰 Цены → Excel» выгружает список себестоимости (Название / Артикул поставщика / Код номенклатуры / Себестоимость), «📥 Цены ← Excel» — загружает такой файл обратно</li>
+      </ol>
+    </div>
+
+    <div class="status-msg status-ok" id="status-ok"></div>
+    <div class="status-msg status-warn" id="status-warn"></div>
+    <div class="status-msg status-err" id="status-err"></div>
+
+    <div class="formula-bar" id="formula-bar"></div>
+
+    
+
+    <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <h3>📁 Перетащите файл сюда или нажмите для выбора</h3>
+      <p>Поддерживаются: .xlsx, .xls, .csv (отчёты Wildberries)</p>
+      <button class="btn btn-primary">Выбрать файл</button>
+      <input type="file" id="file-input" accept=".xlsx,.xls,.csv" onchange="handleFile(event)">
+    </div>
+
+    <div class="paste-area">
+      <label>📋 Или вставьте данные из Excel (выделите всё в отчёте → Ctrl+C → сюда Ctrl+V):</label>
+      <textarea class="paste-box" id="paste-input" readonly placeholder="Артикул поставщика  Наименование товара  Кол-во  Цена розничная  ..."></textarea>
+      <div style="margin-top:8px; text-align:right;">
+        <button class="btn btn-secondary" onclick="handlePaste()">Обработать вставку</button>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="card-label">Выручка</div><div class="card-value" id="sum-revenue">0 ₽</div></div>
+      <div class="card"><div class="card-label">К перечислению</div><div class="card-value" id="sum-topay">0 ₽</div></div>
+      <div class="card"><div class="card-label">Расходы WB</div><div class="card-value neg" id="sum-expenses">0 ₽</div></div>
+      <div class="card"><div class="card-label">Себестоимость</div><div class="card-value neg" id="sum-cost">0 ₽</div></div>
+      <div class="card"><div class="card-label">Чистая прибыль</div><div class="card-value" id="sum-profit">0 ₽</div></div>
+      <div class="card"><div class="card-label">Маржинальность</div><div class="card-value" id="sum-margin">0 %</div></div>
+    </div>
+
+    <div class="table-container">
+      <div class="table-toolbar">
+        <span id="row-count">0 артикулов</span>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="addRow()">➕ Добавить</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="loadDemo()">📊 Демо</button>
+        <button class="btn btn-success" style="padding:6px 12px; font-size:12px;" onclick="downloadCSV()">📤 CSV</button>
+        <button class="btn btn-success" style="padding:6px 12px; font-size:12px;" onclick="downloadPricesExcel()" title="Выгрузить закупочные цены в Excel: Название / Артикул поставщика / Код номенклатуры / Себестоимость">💰 Цены → Excel</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="document.getElementById('prices-file-input').click()" title="Загрузить закупочные цены из Excel">📥 Цены ← Excel</button>
+        <input type="file" id="prices-file-input" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handlePricesFile(event)">
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="clearAll()">🗑 Очистить</button>
+      </div>
+      <div class="table-wrap">
+        <table id="main-table">
+          <thead>
+            <tr>
+              <th>Артикул поставщика</th>
+              <th>Код номенклатуры</th>
+              <th>Название</th>
+              <th>Кол-во</th>
+              <th>Выручка</th>
+              <th>К перечислению</th>
+              <th style="background:#fef3c7; color:#92400e;">Себестоимость</th>
+              <th>Прибыль</th>
+              <th>Маржа</th>
+              <th>Комиссия</th>
+              <th>Логистика</th>
+              <th>Хранение</th>
+              <th>Штрафы</th>
+              <th>Эквайринг</th>
+              <th>Прочие удержания</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="3"><strong>ИТОГО</strong></td>
+              <td id="t-qty">0</td>
+              <td id="t-revenue">0</td>
+              <td id="t-topay">0</td>
+              <td id="t-cost">0</td>
+              <td id="t-profit">0</td>
+              <td id="t-margin">0%</td>
+              <td colspan="6"></td>
+              <td></td>
+            </tr>
+            <tr class="total-row expense-row">
+              <td colspan="9" style="text-align:left; padding-left:16px; color:#92400e;"><strong>в т.ч. Затраты WB</strong></td>
+              <td id="t-commission">0</td>
+              <td id="t-logistics">0</td>
+              <td id="t-storage">0</td>
+              <td id="t-penalty">0</td>
+              <td id="t-acquiring">0</td>
+              <td id="t-otherPayments">0</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="empty-state" id="empty-state">
+          <h3>📭 Таблица пуста</h3>
+          <p>Загрузите отчёт WB или нажмите «Демо»</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container" style="margin-top:20px;">
+      <div class="table-toolbar">
+        <span id="history-count">История: 0 отчётов</span>
+        <button class="btn btn-success" style="padding:6px 12px; font-size:12px;" onclick="downloadHistoryCSV()">📤 Скачать историю (CSV)</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="clearHistory()">🗑 Очистить историю</button>
+        <button class="btn btn-danger" style="padding:6px 12px; font-size:12px;" onclick="fullClear()">🗑 Полная очистка цен и истории</button>
+      </div>
+      <div class="table-wrap">
+        <table id="history-table" style="min-width:900px;">
+          <thead>
+            <tr>
+              <th style="text-align:left; min-width:180px;">Дата / период</th>
+              <th style="text-align:left; min-width:120px;">Номер отчёта</th>
+              <th>Кол-во</th>
+              <th>Выручка</th>
+              <th>Расходы WB</th>
+              <th>Себестоимость</th>
+              <th>Чистая прибыль</th>
+              <th>Маржа</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="history-empty-state">
+          <h3>📭 История пуста</h3>
+          <p>Заполните «Номер отчёта» и нажмите «Сохранить в историю»</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== STATE ====================
+let rows = [];
+let nextId = 1;
+const STORAGE_KEY = 'wb_profit_report_v5';
+const COST_STORAGE_KEY = 'wb_profit_cost_by_article_v1';
+const HISTORY_STORAGE_KEY = 'wb_profit_history_v1';
+let costByArticle = {};
+let history = [];
+let nextHistoryId = 1;
+let useAltFormula = false;
+
+// ==================== COLUMN MAPPING ====================
+const COLUMN_MAP = {
+  article: {
+    keys: ['артикул поставщика', 'supplierarticle', 'supplier_article', 'артикул', 'article'],
+    required: true
+  },
+  nomCode: {
+    keys: ['код номенклатуры', 'кодноменклатуры', 'nomcode', 'код_номенклатуры'],
+    required: false
+  },
+  name: {
+    keys: ['название', 'name', 'наименование товара', 'наименование', 'товар', 'productname', 'наименование_товара', 'предмет', 'subject'],
+    required: false
+  },
+  qty: {
+    keys: ['кол-во', 'количество', 'quantity', 'qty', 'кол во', 'количество, шт'],
+    required: true
+  },
+  revenue: {
+    keys: ['вайлдберриз реализовал товар', 'сумма продаж', 'розничная цена', 'retail_amount', 'retailprice', 'цена розничная', 'продажа', 'revenue', 'сумма продажи', 'сумма продажи ₽'],
+    required: false
+  },
+  commission: {
+    keys: ['вознаграждение вайлдберриз', 'комиссия', 'commission', 'вознаграждение', 'сумма комиссии', 'вознаграждение wb', 'вознаграждение с продаж'],
+    required: false
+  },
+  logistics: {
+    keys: ['услуги по доставке', 'логистика', 'доставка', 'delivery', 'logistics', 'стоимость логистики', 'услуги по доставке товара покупателю', 'доставка до покупателя'],
+    required: false
+  },
+  storage: {
+    keys: ['хранение', 'storage', 'стоимость хранения', 'storage_fee', 'услуги хранения'],
+    required: false
+  },
+  penalty: {
+    keys: ['штрафы', 'штраф', 'penalty', 'общая сумма штрафов', 'штраф магазина'],
+    required: false
+  },
+  acquiring: {
+    keys: ['эквайринг', 'acquiring', 'эквайринговая комиссия', 'acquiring_fee', 'комиссия эквайринга', 'компенсация платёжных услуг', 'компенсация платежных услуг', 'комиссия за интеграцию платёжных сервисов'],
+    required: false
+  },
+  otherPayments: {
+    keys: ['прочие удержания', 'прочиеудержания', 'прочие удержания/выплаты', 'прочие_удержания', 'otherpayments', 'удержания', 'удержания/выплаты', 'прочие выплаты'],
+    required: false
+  },
+  acceptance: {
+    keys: ['операции на приемке', 'операции на приёмке', 'стоимость операций при приемке', 'стоимость операций при приёмке'],
+    required: false
+  },
+  loyaltyParticipation: {
+    keys: ['стоимость участия в программе лояльности', 'участие в программе лояльности'],
+    required: false
+  },
+  loyaltyPoints: {
+    keys: ['сумма баллов, удержанных по программе лояльности', 'баллов, удержанных по программе лояльности'],
+    required: false
+  },
+  wbAdjustment: {
+    keys: ['корректировка вознаграждения вайлдберриз', 'корректировка вознаграждения вб'],
+    required: false
+  },
+  oneTimeAdjustment: {
+    keys: ['разовое изменение срока перечисления денежных средств', 'разовое изменение срока перечисления'],
+    required: false
+  },
+  toPay: {
+    keys: ['к перечислению', 'кперечислению', 'ppvzforpay', 'к_перечислению', 'итого к оплате', 'к перечислению продавцу', 'к перечислению продавцу за реализованный товар', 'к перечислению, ₽'],
+    required: false
+  },
+  docType: {
+    keys: ['тип документа', 'doctype', 'document_type', 'тип_документа'],
+    required: false
+  },
+  saleDate: {
+    keys: ['дата продажи', 'saledate', 'sale_date', 'дата заказа покупателем', 'дата'],
+    required: false
+  }
+};
+
+function findColumnIndex(headers, field) {
+  const map = COLUMN_MAP[field];
+  if (!map) return -1;
+  const h = headers.map(h => String(h).toLowerCase().trim().replace(/[\s_\-₽]/g, ''));
+  for (const key of map.keys) {
+    const cleanKey = key.toLowerCase().replace(/[\s_\-₽]/g, '');
+    const idx = h.findIndex(header => header.includes(cleanKey) || cleanKey.includes(header));
+    if (idx !== -1) return idx;
+  }
+  return -1;
+}
+
+// ==================== INIT ====================
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try { rows = JSON.parse(saved); nextId = rows.reduce((m,r) => Math.max(m, r.id||0), 0) + 1; } catch(e){ rows = []; }
+  }
+  const savedCosts = localStorage.getItem(COST_STORAGE_KEY);
+  if (savedCosts) {
+    try { costByArticle = JSON.parse(savedCosts); } catch(e) { costByArticle = {}; }
+  }
+  const savedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
+  if (savedHistory) {
+    try { history = JSON.parse(savedHistory); nextHistoryId = history.reduce((m,h) => Math.max(m, h.id||0), 0) + 1; } catch(e) { history = []; }
+  }
+  renderHistory();
+  render();
+}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(rows)); }
+function saveCosts() { localStorage.setItem(COST_STORAGE_KEY, JSON.stringify(costByArticle)); }
+function saveHistory() { localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history)); }
+
+// ==================== FILE UPLOAD ====================
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const files = e.dataTransfer.files;
+  if (files.length) processFile(files[0]);
+});
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  hideStatus();
+  guessReportNumberFromFilename(file.name);
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+      if (jsonData.length < 2) { showStatus('err', 'Файл пустой или не содержит данных'); return; }
+      parseData(jsonData);
+    } catch(err) {
+      showStatus('err', 'Ошибка чтения файла: ' + err.message);
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ==================== REPORT META (number / date) ====================
+function guessReportNumberFromFilename(filename) {
+  const field = document.getElementById('report-number');
+  if (!field) return;
+  const base = String(filename || '').replace(/\.(xlsx|xls|csv)$/i, '');
+  const nums = base.match(/\d+/g);
+  if (!nums || nums.length === 0) return;
+  // Typical WB filename: <seller_id>_<report_number>_<part>. Prefer the
+  // second-to-last numeric group; fall back to the only group available.
+  const guess = nums.length >= 2 ? nums[nums.length - 2] : nums[0];
+  field.value = guess;
+}
+function guessReportDateFromData(headers, data, idxDate) {
+  const field = document.getElementById('report-date');
+  if (!field) return;
+  if (idxDate === -1) {
+    field.value = new Date().toISOString().slice(0, 10);
+    return;
+  }
+  let min = null, max = null;
+  for (let i = 1; i < data.length; i++) {
+    const raw = getVal(data[i], idxDate);
+    if (!raw) continue;
+    const s = String(raw).slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}/.test(s)) continue;
+    if (min === null || s < min) min = s;
+    if (max === null || s > max) max = s;
+  }
+  if (min && max) {
+    field.value = min === max ? min : (min + ' – ' + max);
+  } else {
+    field.value = new Date().toISOString().slice(0, 10);
+  }
+}
+function onReportMetaChange() { /* values are read live from inputs when saving to history */ }
+
+// ==================== PASTE ====================
+function handlePaste() {
+  const text = document.getElementById('paste-input').value.trim();
+  if (!text) return;
+  hideStatus();
+  let lines = text.split('\n').map(l => l.split('\t'));
+  if (lines.length > 0 && lines[0].length < 2) {
+    lines = text.split('\n').map(l => l.split(','));
+  }
+  parseData(lines);
+}
+
+// ==================== PARSE ====================
+function parseData(data) {
+  if (!data || data.length < 2) { showStatus('err', 'Недостаточно данных'); return; }
+
+  const headers = data[0].map(h => String(h).trim());
+  const idx = {};
+  for (const field of Object.keys(COLUMN_MAP)) {
+    idx[field] = findColumnIndex(headers, field);
+  }
+
+  if (idx.article === -1 || idx.qty === -1) {
+    showStatus('err', 'Не удалось найти колонки «Артикул» и «Кол-во» в файле. Проверьте, что загружен отчёт WB.');
+    return;
+  }
+
+  useAltFormula = (idx.toPay === -1);
+  guessReportDateFromData(headers, data, idx.saleDate);
+
+  // Rows with no "Артикул поставщика" (storage, приёмка, разовые удержания и т.п.)
+  // are real deductions from the payout — they must NOT be dropped, just grouped
+  // under a virtual bucket instead of a specific SKU.
+  const UNASSIGNED_KEY = '\u0000__UNASSIGNED__';
+
+  const grouped = {};
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (!row || row.length === 0) continue;
+    const articleRaw = String(getVal(row, idx.article) || '').trim();
+    const article = articleRaw || UNASSIGNED_KEY;
+
+    const nomCode = String(getVal(row, idx.nomCode) || '');
+    const name = String(getVal(row, idx.name) || '');
+    const qtyRaw = numQty(getVal(row, idx.qty));
+    const docType = idx.docType !== -1 ? String(getVal(row, idx.docType) || '').toLowerCase().trim() : null;
+
+    let qtySigned;
+    // Sign multiplier for monetary fields: a "Возврат" row stores its amounts as
+    // positive numbers even though they must be subtracted from the totals.
+    let sign = 1;
+    if (docType === null) {
+      // Column "Тип документа" not found (e.g. simple pasted table) — use qty as-is
+      qtySigned = qtyRaw;
+    } else if (docType.includes('возврат')) {
+      qtySigned = -qtyRaw;
+      sign = -1;
+    } else if (docType.includes('продажа')) {
+      qtySigned = qtyRaw;
+    } else {
+      // Auxiliary row (logistics/storage/penalty compensation) — its "Кол-во" is
+      // not a sold-unit count, so it must not be added to the quantity total
+      qtySigned = 0;
+    }
+
+    const revenue = num(getVal(row, idx.revenue)) * sign;
+    const commission = num(getVal(row, idx.commission)) * sign;
+    const logistics = num(getVal(row, idx.logistics)) * sign;
+    const storage = num(getVal(row, idx.storage)) * sign;
+    const penalty = num(getVal(row, idx.penalty)) * sign;
+    const acquiring = num(getVal(row, idx.acquiring)) * sign;
+    const toPay = num(getVal(row, idx.toPay)) * sign;
+    // "Прочие удержания" bucket combines every other deduction/adjustment the WB
+    // report lists separately: удержания, операции на приёмке, участие в
+    // программе лояльности, удержанные баллы — minus corrective additions
+    // (корректировка ВВ, разовое изменение срока перечисления), which give money
+    // back rather than take it away.
+    const otherPayments = (
+      num(getVal(row, idx.otherPayments)) +
+      num(getVal(row, idx.acceptance)) +
+      num(getVal(row, idx.loyaltyParticipation)) +
+      num(getVal(row, idx.loyaltyPoints)) -
+      num(getVal(row, idx.wbAdjustment)) -
+      num(getVal(row, idx.oneTimeAdjustment))
+    ) * sign;
+
+    if (!grouped[article]) {
+      grouped[article] = {
+        article: articleRaw,
+        nomCode,
+        name: articleRaw ? (name || articleRaw) : 'Прочие удержания без привязки к артикулу (хранение, приёмка и т.п.)',
+        qty: 0, revenue: 0, commission: 0, logistics: 0, storage: 0, penalty: 0, acquiring: 0, otherPayments: 0, toPay: 0
+      };
+    }
+    grouped[article].qty = Math.round((grouped[article].qty + qtySigned) * 10000) / 10000;
+    grouped[article].revenue += revenue;
+    grouped[article].commission += commission;
+    grouped[article].logistics += logistics;
+    grouped[article].storage += storage;
+    grouped[article].penalty += penalty;
+    grouped[article].acquiring += acquiring;
+    grouped[article].otherPayments += otherPayments;
+    grouped[article].toPay += toPay;
+    if (articleRaw && name && !grouped[article].name) grouped[article].name = name;
+  }
+
+  rows = Object.values(grouped).map((r, i) => ({
+    id: i + 1,
+    article: String(r.article || ''),
+    nomCode: String(r.nomCode || ''),
+    name: String(r.name || ''),
+    qty: Math.round((Number(r.qty) || 0) * 10000) / 10000,
+    otherPayments: Number(r.otherPayments) || 0,
+    revenue: Number(r.revenue) || 0,
+    commission: Number(r.commission) || 0,
+    logistics: Number(r.logistics) || 0,
+    storage: Number(r.storage) || 0,
+    penalty: Number(r.penalty) || 0,
+    acquiring: Number(r.acquiring) || 0,
+    toPay: Number(r.toPay) || 0,
+    cost: costByArticle[String(r.article || '')] !== undefined ? Number(costByArticle[String(r.article || '')]) || 0 : 0
+  }));
+  nextId = rows.length + 1;
+  save();
+  render();
+
+  const foundCols = Object.keys(idx).filter(k => idx[k] !== -1).map(k => {
+    const names = {'article':'Артикул','name':'Наименование','qty':'Кол-во','revenue':'Выручка','commission':'Комиссия','logistics':'Логистика','storage':'Хранение','penalty':'Штрафы','acquiring':'Эквайринг','toPay':'К перечислению'};
+    return names[k] || k;
+  }).join(', ');
+
+  let msg = `✅ Загружено ${rows.length} артикулов. Распознаны колонки: ${foundCols}.`;
+
+  if (useAltFormula) {
+    msg += ' ⚠️ Колонка «К перечислению» не найдена. Прибыль считается как: Выручка − Комиссия − Логистика − Хранение − Штрафы − Эквайринг − Прочие удержания − (Себестоимость × Кол-во).';
+    showFormulaBar('warn', 'Формула прибыли: Выручка − Комиссия − Логистика − Хранение − Штрафы − Эквайринг − Прочие удержания − (Себестоимость × Кол-во) (колонка «К перечислению» не найдена в файле)');
+  } else {
+    showFormulaBar('ok', 'Формула прибыли: (К перечислению − Логистика − Хранение − Штрафы − Прочие удержания) − (Себестоимость × Кол-во). «Прочие удержания» включают операции при приёмке, программу лояльности и корректировки ВВ.');
+  }
+
+  showStatus('ok', msg);
+}
+
+function getVal(row, index) {
+  if (index === -1 || index >= row.length) return 0;
+  return row[index];
+}
+function num(v) {
+  if (v === null || v === undefined || v === '') return 0;
+  const cleaned = String(v).replace(/[\s\u00A0₽]/g, '').replace(',', '.');
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? 0 : Math.round(n * 100) / 100;
+}
+function numQty(v) {
+  if (v === null || v === undefined || v === '') return 0;
+  const cleaned = String(v).replace(/[\s\u00A0₽]/g, '').replace(',', '.');
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? 0 : Math.round(n * 10000) / 10000;
+}
+
+// ==================== FORMULA BAR ====================
+function showFormulaBar(type, text) {
+  const bar = document.getElementById('formula-bar');
+  bar.textContent = text;
+  bar.className = 'formula-bar show ' + type;
+}
+
+// ==================== RENDER ====================
+function render() {
+  try {
+    const tbody = document.getElementById('tbody');
+    const empty = document.getElementById('empty-state');
+    const table = document.getElementById('main-table');
+
+    if (rows.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      table.style.display = 'none';
+      updateTotals();
+      document.getElementById('row-count').textContent = '0 артикулов';
+      document.getElementById('formula-bar').classList.remove('show');
+      return;
+    }
+    empty.style.display = 'none';
+    table.style.display = 'table';
+    document.getElementById('row-count').textContent = rows.length + ' артикулов';
+
+    tbody.innerHTML = rows.map(r => {
+      const qty = Number((Number(r.qty)||0).toFixed(4));
+      const revenue = Number(r.revenue) || 0;
+      const commission = Number(r.commission) || 0;
+      const logistics = Number(r.logistics) || 0;
+      const storage = Number(r.storage) || 0;
+      const penalty = Number(r.penalty) || 0;
+      const acquiring = Number(r.acquiring) || 0;
+      const otherPayments = Number(r.otherPayments) || 0;
+      const toPay = Number(r.toPay) || 0;
+      const cost = Number(r.cost) || 0;
+
+      const costTotal = cost * qty;
+      const expenses = commission + logistics + storage + penalty + acquiring;
+
+      let profit;
+      if (useAltFormula || (toPay === 0 && revenue > 0)) {
+        // No "К перечислению" column: revenue here is the raw sale price, so every
+        // fee (including эквайринг) still needs to be subtracted explicitly.
+        profit = revenue - expenses - otherPayments - costTotal;
+      } else {
+        // "К перечислению" already has комиссия и эквайринг вычтены WB — subtracting
+        // acquiring again here would double-count it.
+        profit = toPay - logistics - storage - penalty - otherPayments - costTotal;
+      }
+
+      const margin = revenue > 0 ? (profit / revenue * 100) : 0;
+      const cls = profit > 0 ? 'profit-pos' : (profit < 0 ? 'profit-neg' : 'profit-zero');
+
+      return `<tr data-id="${r.id}">
+        <td><input class="cell-input text-left" readonly value="${esc(r.article || '')}" onchange="update(${r.id},'article',this.value)"></td>
+        <td><input class="cell-input text-left" readonly value="${esc(r.nomCode || '')}" onchange="update(${r.id},'nomCode',this.value)"></td>
+        <td><input class="cell-input text-left" readonly value="${esc(r.name || '')}" onchange="update(${r.id},'name',this.value)"></td>
+        <td><input class="cell-input" type="number" readonly value="${qty}" onchange="update(${r.id},'qty',+this.value)"></td>
+        <td><input class="cell-input" type="number" readonly value="${revenue}" onchange="update(${r.id},'revenue',+this.value)"></td>
+        <td><input class="cell-input" type="number" readonly value="${toPay}" onchange="update(${r.id},'toPay',+this.value)"></td>
+        <td><input class="cell-input cost" type="number" value="${cost}" onchange="update(${r.id},'cost',+this.value)" placeholder="0"></td>
+        <td class="profit ${cls}">${fmt(profit)}</td>
+        <td>${margin.toFixed(1)}%</td>
+        <td><input class="cell-input" type="number" readonly value="${commission}" onchange="update(${r.id},'commission',+this.value)"></td>
+        <td><input class="cell-input" type="number" readonly value="${logistics}" onchange="update(${r.id},'logistics',+this.value)"></td>
+        <td><input class="cell-input" type="number" readonly value="${storage}" onchange="update(${r.id},'storage',+this.value)"></td>
+        <td><input class="cell-input" type="number" readonly value="${penalty}" onchange="update(${r.id},'penalty',+this.value)"></td>
+        <td><input class="cell-input" type="number" readonly value="${acquiring}" onchange="update(${r.id},'acquiring',+this.value)"></td>
+        <td><input class="cell-input" type="number" readonly value="${Number(r.otherPayments)||0}" onchange="update(${r.id},'otherPayments',+this.value)"></td>
+        <td><button class="del-btn" onclick="removeRow(${r.id})">×</button></td>
+      </tr>`;
+    }).join('');
+    updateTotals();
+  } catch (err) {
+    console.error('Render error:', err);
+    showStatus('err', 'Ошибка отображения таблицы: ' + err.message);
+  }
+}
+
+function computeTotals() {
+  const t = rows.reduce((a, r) => {
+    a.qty += Number((Number(r.qty)||0).toFixed(4));
+    a.revenue += (Number(r.revenue) || 0);
+    a.commission += (Number(r.commission) || 0);
+    a.logistics += (Number(r.logistics) || 0);
+    a.storage += (Number(r.storage) || 0);
+    a.penalty += (Number(r.penalty) || 0);
+    a.acquiring += (Number(r.acquiring) || 0);
+    a.otherPayments += (Number(r.otherPayments) || 0);
+    a.toPay += (Number(r.toPay) || 0);
+    a.cost += (Number(r.cost) || 0) * (Number(r.qty) || 0);
+    return a;
+  }, {qty:0,revenue:0,commission:0,logistics:0,storage:0,penalty:0,acquiring:0,otherPayments:0,toPay:0,cost:0});
+
+  const expenses = t.commission + t.logistics + t.storage + t.penalty + t.acquiring;
+  // "Итого к оплате": already net of комиссия/эквайринг (they're baked into
+  // "К перечислению"), so only логистика/хранение/штрафы/прочие удержания
+  // (which now also folds in приёмку, программу лояльности и корректировки)
+  // get subtracted here — no acquiring, or it would be counted twice.
+  const netToPay = t.toPay - t.logistics - t.storage - t.penalty - t.otherPayments;
+
+  let profit;
+  if (useAltFormula || (t.toPay === 0 && t.revenue > 0)) {
+    profit = t.revenue - expenses - t.otherPayments - t.cost;
+  } else {
+    profit = netToPay - t.cost;
+  }
+
+  const margin = t.revenue > 0 ? (profit / t.revenue * 100) : 0;
+  return { ...t, expenses, profit, margin, netToPay };
+}
+
+function updateTotals() {
+  try {
+    const t = computeTotals();
+    const { expenses, profit, margin, netToPay } = t;
+
+    document.getElementById('t-qty').textContent = fmt(t.qty);
+    document.getElementById('t-revenue').textContent = fmt(t.revenue);
+    document.getElementById('t-topay').textContent = fmt(netToPay);
+    document.getElementById('t-cost').textContent = fmt(t.cost);
+
+    const tProfit = document.getElementById('t-profit');
+    tProfit.textContent = fmt(profit);
+    tProfit.style.color = profit >= 0 ? '#059669' : '#dc2626';
+
+    const tMargin = document.getElementById('t-margin');
+    tMargin.textContent = margin.toFixed(1) + '%';
+
+    document.getElementById('t-commission').textContent = fmt(t.commission);
+    document.getElementById('t-logistics').textContent = fmt(t.logistics);
+    document.getElementById('t-storage').textContent = fmt(t.storage);
+    document.getElementById('t-penalty').textContent = fmt(t.penalty);
+    document.getElementById('t-acquiring').textContent = fmt(t.acquiring);
+    document.getElementById('t-otherPayments').textContent = fmt(t.otherPayments);
+
+    document.getElementById('sum-revenue').textContent = fmt(t.revenue) + ' ₽';
+    document.getElementById('sum-topay').textContent = fmt(netToPay) + ' ₽';
+    document.getElementById('sum-expenses').textContent = fmt(expenses) + ' ₽';
+    document.getElementById('sum-cost').textContent = fmt(t.cost) + ' ₽';
+
+    const sp = document.getElementById('sum-profit');
+    sp.textContent = fmt(profit) + ' ₽';
+    sp.className = 'card-value ' + (profit > 0 ? 'pos' : profit < 0 ? 'neg' : '');
+
+    const sm = document.getElementById('sum-margin');
+    sm.textContent = margin.toFixed(1) + ' %';
+    sm.className = 'card-value ' + (margin > 0 ? 'pos' : margin < 0 ? 'neg' : '');
+  } catch (err) {
+    console.error('Totals error:', err);
+  }
+}
+
+// ==================== CRUD ====================
+function update(id, field, value) { 
+  const r = rows.find(x => x.id === id); 
+  if (r) { 
+    r[field] = value; 
+    if (field === 'cost' && r.article) {
+      costByArticle[r.article] = Number(value) || 0;
+      saveCosts();
+    }
+    save(); 
+    render(); 
+  } 
+}
+function removeRow(id) { rows = rows.filter(x => x.id !== id); save(); render(); }
+function addRow() { 
+  rows.push({ id: nextId++, article: '', nomCode: '', name: '', qty: 0, revenue: 0, commission: 0, logistics: 0, storage: 0, penalty: 0, acquiring: 0, otherPayments: 0, toPay: 0, cost: 0 }); 
+  save(); 
+  render(); 
+}
+function clearAll() { if (!confirm('Очистить всё?')) return; rows = []; nextId = 1; save(); render(); }
+function loadDemo() {
+  rows = [
+    { id: 1, article: 'SHIRT-001', nomCode: '252606791', name: 'Футболка мужская черная XL, хлопок 100%', qty: 15, revenue: 45000, commission: 9000, logistics: 3500, storage: 200, penalty: 0, acquiring: 450, otherPayments: 0, toPay: 31850, cost: 0 },
+    { id: 2, article: 'SHOE-002', nomCode: '401727571', name: 'Кроссовки Nike Air Max, размер 42-45', qty: 8, revenue: 64000, commission: 12800, logistics: 4200, storage: 350, penalty: 500, acquiring: 640, otherPayments: 0, toPay: 45510, cost: 0 },
+    { id: 3, article: 'BAG-003', nomCode: '319000184', name: 'Рюкзак городской 20л, водонепроницаемый', qty: 22, revenue: 55000, commission: 11000, logistics: 5100, storage: 180, penalty: 0, acquiring: 550, otherPayments: 0, toPay: 38170, cost: 0 },
+  ];
+  useAltFormula = false;
+  nextId = 4; save(); render();
+  showFormulaBar('ok', 'Формула прибыли: (К перечислению − Логистика − Хранение − Штрафы − Эквайринг) − (Себестоимость × Кол-во)');
+  showStatus('ok', 'Демо-данные загружены. Попробуйте ввести себестоимость в жёлтые ячейки.');
+}
+
+// ==================== EXPORT ====================
+function downloadCSV() {
+  const h = ['Артикул_поставщика','Код_номенклатуры','Название','Кол-во','Выручка','К_перечислению','Себестоимость_за_шт','Прибыль','Маржа_%','Комиссия','Логистика','Хранение','Штрафы','Эквайринг','Прочие_удержания'];
+  const lines = rows.map(r => {
+    const qty = Number((Number(r.qty)||0).toFixed(4));
+    const revenue = Number(r.revenue) || 0;
+    const commission = Number(r.commission) || 0;
+    const logistics = Number(r.logistics) || 0;
+    const storage = Number(r.storage) || 0;
+    const penalty = Number(r.penalty) || 0;
+    const acquiring = Number(r.acquiring) || 0;
+    const toPay = Number(r.toPay) || 0;
+    const cost = Number(r.cost) || 0;
+    const costTotal = cost * qty;
+    const otherPayments = Number(r.otherPayments) || 0;
+    const expenses = commission + logistics + storage + penalty + acquiring;
+    let profit;
+    if (useAltFormula || (toPay === 0 && revenue > 0)) {
+      profit = revenue - expenses - otherPayments - costTotal;
+    } else {
+      profit = toPay - logistics - storage - penalty - otherPayments - costTotal;
+    }
+    const margin = revenue > 0 ? (profit / revenue * 100).toFixed(1) : '0.0';
+    return [r.article || '', r.nomCode || '', r.name || '', qty, revenue, toPay, cost, profit, margin, commission, logistics, storage, penalty, acquiring, Number(r.otherPayments)||0].join(';');
+  });
+  const csv = '\uFEFF' + h.join(';') + '\n' + lines.join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'wb_profit_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+}
+
+// ==================== ЦЕНЫ (СЕБЕСТОИМОСТЬ): EXPORT / IMPORT В EXCEL ====================
+// Формат файла: A — Название, B — Артикул поставщика, C — Код номенклатуры, D — Себестоимость
+function downloadPricesExcel() {
+  // Берём уникальные артикулы из текущей таблицы (включая те, что сейчас без
+  // строки, но уже сохранены в costByArticle), пропуская виртуальную строку
+  // "без артикула".
+  const byArticle = {};
+  rows.forEach(r => {
+    if (!r.article) return;
+    byArticle[r.article] = { name: r.name || '', nomCode: r.nomCode || '', cost: Number(r.cost) || 0 };
+  });
+  Object.keys(costByArticle).forEach(article => {
+    if (!article || byArticle[article]) return;
+    byArticle[article] = { name: '', nomCode: '', cost: Number(costByArticle[article]) || 0 };
+  });
+
+  const articles = Object.keys(byArticle).sort();
+  if (articles.length === 0) {
+    showStatus('warn', '⚠️ Нет артикулов с ценами — сначала загрузите отчёт и/или заполните себестоимость.');
+    return;
+  }
+
+  const aoa = [['Название', 'Артикул поставщика', 'Код номенклатуры', 'Себестоимость']];
+  articles.forEach(article => {
+    const d = byArticle[article];
+    aoa.push([d.name, article, d.nomCode, d.cost]);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = [{ wch: 40 }, { wch: 18 }, { wch: 18 }, { wch: 14 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Себестоимость');
+  XLSX.writeFile(wb, 'wb_prices_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+  showStatus('ok', '✅ Файл с закупочными ценами (' + articles.length + ' арт.) выгружен.');
+}
+
+function handlePricesFile(e) {
+  const file = e.target.files[0];
+  if (file) processPricesFile(file);
+  e.target.value = '';
+}
+
+function processPricesFile(file) {
+  hideStatus();
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const isCsv = /\.csv$/i.test(file.name);
+      let aoa;
+      if (isCsv) {
+        const text = new TextDecoder('utf-8').decode(new Uint8Array(e.target.result));
+        const delim = text.split('\n')[0].includes(';') ? ';' : ',';
+        aoa = text.split(/\r?\n/).filter(l => l.length).map(l => l.split(delim));
+      } else {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        aoa = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+      }
+      importPrices(aoa);
+    } catch (err) {
+      showStatus('err', 'Ошибка чтения файла с ценами: ' + err.message);
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function importPrices(aoa) {
+  if (!aoa || aoa.length < 2) { showStatus('err', 'Файл с ценами пуст или не содержит данных.'); return; }
+
+  // Определяем колонки по заголовку, если он похож на наш формат; иначе
+  // считаем, что порядок фиксирован: A-название, B-артикул, C-код номенклатуры, D-себестоимость.
+  const headerRow = aoa[0].map(h => String(h).toLowerCase().trim());
+  const looksLikeHeader = headerRow.some(h => h.includes('артикул') || h.includes('себестоимост') || h.includes('название'));
+  let colName = 0, colArticle = 1, colNom = 2, colCost = 3;
+  if (looksLikeHeader) {
+    const findCol = (keys, fallback) => {
+      const i = headerRow.findIndex(h => keys.some(k => h.includes(k)));
+      return i !== -1 ? i : fallback;
+    };
+    colName = findCol(['название', 'наименование'], 0);
+    colArticle = findCol(['артикул'], 1);
+    colNom = findCol(['код номенклатуры', 'номенклатур'], 2);
+    colCost = findCol(['себестоимост'], 3);
+  }
+  const startRow = looksLikeHeader ? 1 : 0;
+
+  let updated = 0, added = 0;
+  for (let i = startRow; i < aoa.length; i++) {
+    const row = aoa[i];
+    if (!row || row.length === 0) continue;
+    const article = String(getVal(row, colArticle) || '').trim();
+    if (!article) continue;
+    const cost = num(getVal(row, colCost));
+    costByArticle[article] = cost;
+
+    const existing = rows.find(r => r.article === article);
+    if (existing) {
+      existing.cost = cost;
+      updated++;
+    } else {
+      added++;
+    }
+  }
+  saveCosts();
+  save();
+  render();
+  showStatus('ok', `✅ Цены загружены: обновлено ${updated} артикулов в текущей таблице` + (added > 0 ? `, ещё ${added} сохранено на будущее (появятся при загрузке отчёта с этими артикулами)` : '') + '.');
+}
+
+// ==================== HISTORY (по отчётам: дата, номер, чистая прибыль) ====================
+function saveToHistory() {
+  const reportNumber = (document.getElementById('report-number').value || '').trim();
+  const reportDate = (document.getElementById('report-date').value || '').trim();
+  if (!reportNumber) {
+    showStatus('warn', '⚠️ Укажите номер отчёта, чтобы сохранить его в историю.');
+    return;
+  }
+  if (rows.length === 0) {
+    showStatus('warn', '⚠️ Сначала загрузите отчёт — таблица пуста.');
+    return;
+  }
+  const t = computeTotals();
+  const entry = {
+    reportNumber,
+    date: reportDate || new Date().toISOString().slice(0, 10),
+    qty: t.qty,
+    revenue: t.revenue,
+    expenses: t.expenses,
+    cost: t.cost,
+    profit: t.profit,
+    margin: t.margin,
+    netToPay: t.netToPay,
+    savedAt: new Date().toISOString()
+  };
+  const existingIdx = history.findIndex(h => h.reportNumber === reportNumber);
+  if (existingIdx !== -1) {
+    entry.id = history[existingIdx].id;
+    history[existingIdx] = entry;
+  } else {
+    entry.id = nextHistoryId++;
+    history.push(entry);
+  }
+  history.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  saveHistory();
+  renderHistory();
+  showStatus('ok', '✅ Отчёт №' + reportNumber + ' сохранён в историю.');
+}
+
+function removeHistoryEntry(id) {
+  history = history.filter(h => h.id !== id);
+  saveHistory();
+  renderHistory();
+}
+
+function fullClear() {
+  if (!confirm('⚠️ ВНИМАНИЕ!\n\nЭто удалит ВСЕ сохранённые закупочные цены и ВСЮ историю отчётов безвозвратно.\n\nПродолжить?')) return;
+  costByArticle = {};
+  history = [];
+  nextHistoryId = 1;
+  saveCosts();
+  saveHistory();
+  rows.forEach(r => { r.cost = 0; });
+  save();
+  render();
+  renderHistory();
+  showStatus('ok', '✅ Все закупочные цены и история отчётов полностью очищены.');
+}
+function clearHistory() {
+  if (!confirm('Очистить всю историю отчётов?')) return;
+  history = [];
+  saveHistory();
+  renderHistory();
+}
+
+function renderHistory() {
+  const tbody = document.getElementById('history-tbody');
+  const empty = document.getElementById('history-empty-state');
+  const table = document.getElementById('history-table');
+  document.getElementById('history-count').textContent = 'История: ' + history.length + ' отчётов';
+
+  if (!tbody) return;
+  if (history.length === 0) {
+    tbody.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    if (table) table.style.display = 'none';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  if (table) table.style.display = 'table';
+
+  tbody.innerHTML = history.map(h => {
+    const cls = h.profit > 0 ? 'profit-pos' : (h.profit < 0 ? 'profit-neg' : 'profit-zero');
+    return `<tr>
+      <td style="text-align:left;">${esc(h.date)}</td>
+      <td style="text-align:left;">${esc(h.reportNumber)}</td>
+      <td>${fmt(h.qty)}</td>
+      <td>${fmt(h.revenue)}</td>
+      <td>${fmt(h.expenses)}</td>
+      <td>${fmt(h.cost)}</td>
+      <td class="profit ${cls}">${fmt(h.profit)}</td>
+      <td>${h.margin.toFixed(1)}%</td>
+      <td><button class="del-btn" onclick="removeHistoryEntry(${h.id})">×</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function downloadHistoryCSV() {
+  if (history.length === 0) {
+    showStatus('warn', '⚠️ История пуста — нечего выгружать.');
+    return;
+  }
+  const h = ['Дата_период','Номер_отчёта','Кол-во','Выручка','Расходы_WB','Себестоимость','Чистая_прибыль','Маржа_%'];
+  const lines = history.map(e => [
+    e.date, e.reportNumber, e.qty, e.revenue.toFixed(2), e.expenses.toFixed(2), e.cost.toFixed(2), e.profit.toFixed(2), e.margin.toFixed(1)
+  ].join(';'));
+  const csv = '\uFEFF' + h.join(';') + '\n' + lines.join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'wb_profit_history_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+}
+
+
+// ==================== UTILS ====================
+function fmt(n) {
+  const val = Number(n);
+  if (isNaN(val)) return '0';
+  return val.toLocaleString('ru-RU', {minimumFractionDigits:0, maximumFractionDigits:0});
+}
+function esc(s) { return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function showStatus(type, msg) {
+  hideStatus();
+  const el = document.getElementById('status-' + type);
+  if (el) { el.textContent = msg; el.classList.add('show'); }
+}
+function hideStatus() {
+  document.querySelectorAll('.status-msg').forEach(el => el.classList.remove('show'));
+}
+
+init();
+</script>
+
+<style>
+.donate-btn{float:right;background:#6a5cff;color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer}
+#donateModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);align-items:center;justify-content:center}
+#donateModal .box{background:#fff;padding:20px;border-radius:12px;max-width:420px;width:90%}
+.copy{margin-left:8px}
+</style>
+<script>
+function toggleDonate(){let m=document.getElementById('donateModal');m.style.display=m.style.display==='flex'?'none':'flex';}
+function cp(t){navigator.clipboard.writeText(t);alert('Скопировано');}
+</script>
+<div id="donateModal"><div class="box"><h3>Поддержать автора</h3>
+<p><b>MIR:</b> 9112 3810 5464 4216 <button class='copy' onclick="cp('9112381054644216')">Копировать</button></p>
+<p><b>IBAN:</b> BY26ALFA30143442900020270000 <button class='copy' onclick="cp('BY26ALFA30143442900020270000')">Копировать</button></p>
+<button onclick="toggleDonate()">Закрыть</button></div></div>
+</body>
+</html>
