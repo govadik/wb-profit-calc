@@ -81,6 +81,38 @@
     --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     --transition-fast: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  [data-theme="light"] {
+    --bg: #f8fafc;
+    --bg-2: #f1f5f9;
+    --bg-3: #e2e8f0;
+    --surface: rgba(15,23,42,0.03);
+    --surface-hover: rgba(15,23,42,0.06);
+    --surface-active: rgba(15,23,42,0.1);
+    --glass: rgba(255,255,255,0.7);
+    --glass-border: rgba(15,23,42,0.08);
+    --text: #0f172a;
+    --text-2: #475569;
+    --text-3: #64748b;
+    --accent: #7c3aed;
+    --accent-2: #6d28d9;
+    --accent-3: #5b21b6;
+    --accent-glow: rgba(124,58,237,0.25);
+    --accent-glow-lg: rgba(124,58,237,0.1);
+    --success: #059669;
+    --success-glow: rgba(5,150,105,0.25);
+    --danger: #dc2626;
+    --danger-glow: rgba(220,38,38,0.25);
+    --warning: #d97706;
+    --warning-glow: rgba(217,119,6,0.25);
+    --info: #2563eb;
+    --info-glow: rgba(37,99,235,0.25);
+    --border: rgba(15,23,42,0.06);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 8px 16px -4px rgb(0 0 0 / 0.08);
+    --shadow-lg: 0 25px 50px -12px rgb(0 0 0 / 0.1);
+    --shadow-glow: 0 0 60px rgba(124,58,237,0.12);
+  }
+
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -853,6 +885,47 @@
 
   html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent; }
 
+
+  /* SEO About section */
+  #seo-about {
+    padding: 40px 32px;
+    border-top: 1px solid var(--glass-border);
+    background: var(--bg-2);
+    margin-top: 24px;
+    border-radius: var(--radius-sm);
+    animation: fadeIn 0.8s 0.4s backwards;
+  }
+  #seo-about h2 {
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 16px;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  #seo-about h3 {
+    font-size: 16px;
+    color: var(--text-2);
+    margin: 20px 0 10px;
+  }
+  #seo-about h4 {
+    font-size: 15px;
+    color: var(--accent);
+    margin: 14px 0 8px;
+  }
+  #seo-about p {
+    color: var(--text-2);
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+  #seo-about ul {
+    color: var(--text-2);
+    font-size: 14px;
+    line-height: 1.8;
+    margin-left: 20px;
+  }
+  #seo-about li {
+    margin-bottom: 8px;
+  }
   /* Responsive */
   @media (max-width: 1024px) {
     .cards { grid-template-columns: repeat(2, 1fr); }
@@ -876,7 +949,132 @@
     .brand-text h1 { font-size: 15px; }
     .card-value { font-size: 22px; }
   }
+
+  /* Theme toggle button */
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow);
+    transition: var(--transition-fast);
+  }
+  .theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+  .theme-toggle:active { transform: scale(0.95); }
+
+  /* Light theme overrides for hardcoded elements */
+  [data-theme="light"] body::before {
+    opacity: 0.15;
+  }
+  [data-theme="light"] body::after {
+    background-image:
+      linear-gradient(rgba(15,23,42,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,23,42,0.03) 1px, transparent 1px);
+  }
+  [data-theme="light"] .app-header {
+    background: rgba(248,250,252,0.8);
+  }
+  [data-theme="light"] .upload-area {
+    border-color: rgba(124,58,237,0.15);
+  }
+  [data-theme="light"] .upload-area:hover,
+  [data-theme="light"] .upload-area.dragover {
+    background: rgba(124,58,237,0.02);
+  }
+  [data-theme="light"] .paste-box {
+    background: #ffffff;
+    border-color: rgba(15,23,42,0.1);
+  }
+  [data-theme="light"] .paste-box:focus {
+    background: rgba(124,58,237,0.02);
+  }
+  [data-theme="light"] .cell-input {
+    background: rgba(15,23,42,0.03);
+  }
+  [data-theme="light"] .cell-input[readonly] {
+    background: transparent;
+    color: var(--text-3);
+  }
+  [data-theme="light"] .cell-input.cost {
+    background: rgba(251,191,36,0.08);
+    border-color: rgba(217,119,6,0.2);
+    color: #92400e;
+  }
+  [data-theme="light"] .cell-input.cost:focus {
+    background: rgba(251,191,36,0.12);
+    border-color: #d97706;
+    box-shadow: 0 0 0 3px rgba(217,119,6,0.2), 0 0 25px rgba(217,119,6,0.08);
+  }
+  [data-theme="light"] th {
+    background: rgba(15,23,42,0.02);
+  }
+  [data-theme="light"] tr:hover td {
+    background: rgba(15,23,42,0.02);
+  }
+  [data-theme="light"] .total-row {
+    background: rgba(15,23,42,0.02) !important;
+  }
+  [data-theme="light"] .expense-row td {
+    background: rgba(251,191,36,0.02);
+  }
+  [data-theme="light"] .table-wrap::-webkit-scrollbar-track {
+    background: rgba(15,23,42,0.03);
+  }
+  [data-theme="light"] .table-wrap::-webkit-scrollbar-thumb {
+    background: rgba(15,23,42,0.12);
+  }
+  [data-theme="light"] .table-wrap::-webkit-scrollbar-thumb:hover {
+    background: rgba(15,23,42,0.2);
+  }
+  [data-theme="light"] #donateModal .box {
+    background: #ffffff;
+  }
+  [data-theme="light"] .donate-btn {
+    background: #6a5cff;
+  }
+  [data-theme="light"] .copy {
+    background: rgba(15,23,42,0.05);
+    border-color: rgba(15,23,42,0.1);
+  }
+  [data-theme="light"] .copy:hover {
+    background: rgba(15,23,42,0.08);
+  }
+  [data-theme="light"] #seo-about {
+    background: var(--bg-2);
+    border-color: var(--glass-border);
+  }
+  [data-theme="light"] #seo-about h2 {
+    color: var(--text);
+  }
+  [data-theme="light"] #seo-about h3,
+  [data-theme="light"] #seo-about h4,
+  [data-theme="light"] #seo-about p,
+  [data-theme="light"] #seo-about ul,
+  [data-theme="light"] #seo-about li {
+    color: var(--text-2);
+  }
+  [data-theme="light"] #seo-about h4 {
+    color: var(--accent);
+  }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -895,6 +1093,7 @@
       <a href="https://govadik.github.io/wb-profit-calc/instruction.html" target="_blank" class="btn btn-secondary btn-sm">📘 Инструкция</a>
       <a href="https://t.me/wb_profit_calc" target="_blank" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0088cc, #005f8f);">📢 Telegram</a>
       <button class="btn btn-success btn-sm" onclick="toggleDonate()">💝 Отблагодарить</button>
+      <button class="theme-toggle" id="themeToggle" title="Переключить тему">☀️</button>
     </div>
   </div>
 </header>
@@ -1075,33 +1274,33 @@
     </div>
   </section>
 
-<section id="seo-about" style="padding:40px 32px; border-top:1px solid #e2e8f0; background:#f8fafc;">
-  <h2 style="font-size:20px; color:#1a1a2e; margin-bottom:16px;">Бесплатный калькулятор прибыли для продавцов и менеджеров на маркетплейсе Wildberries</h2>
-  <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
+<section id="seo-about">
+  <h2>Бесплатный калькулятор прибыли для продавцов и менеджеров на маркетплейсе Wildberries</h2>
+  <p>
     <strong>ВБ Калькулятор чистой прибыли</strong> — это бесплатный онлайн-инструмент для продавцов маркетплейса Wildberries.
     Загрузите еженедельный финансовый отчёт из личного кабинета ВБ (Финансы → Финансовые отчёты → Детализация),
     введите закупочную цену (себестоимость) на каждый артикул, и калькулятор мгновенно рассчитает
     <strong>чистую прибыль</strong>, <strong>маржинальность</strong>, комиссию ВБ, логистику, хранение, штрафы и эквайринг.
   </p>
-  <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
+  <p>
     В отличие от платных аналитических сервисов, наш калькулятор работает полностью в браузере —
     <strong>данные не уходят на сервер</strong>, не требуется API-ключ Wildberries и никакой подписки.
     Себестоимость товаров сохраняется между сессиями, поэтому при загрузке следующего отчёта цены подставляются автоматически.
   </p>
-  <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
+  <p>
     Калькулятор умеет обрабатывать возвраты, корректировки, операции на приёмке и программу лояльности.
     Результаты можно выгрузить в CSV или Excel. Для удобства ведения учёта доступна история отчётов
     с сохранением динамики прибыли по неделям.
   </p>
-  <h3 style="font-size:16px; color:#334155; margin:20px 0 10px;">Кому подходит</h3>
-  <ul style="color:#475569; font-size:14px; line-height:1.7; margin-left:20px;">
+  <h3>Кому подходит</h3>
+  <ul>
     <li>Селлерам Wildberries, которые хотят быстро проверить реальную прибыль без сложных сервисов</li>
     <li>Новичкам, которые только начинают продавать на WB и ищут бесплатный инструмент для финансового контроля</li>
     <li>Крупным продавцам для сверки данных с платными аналитиками</li>
     <li>Бухгалтерам и менеджерам по закупкам для расчёта себестоимости и маржинальности</li>
   </ul>
-  <h3 style="font-size:16px; color:#334155; margin:20px 0 10px;">Ключевые возможности</h3>
-  <ul style="color:#475569; font-size:14px; line-height:1.7; margin-left:20px;">
+  <h3>Ключевые возможности</h3>
+  <ul>
     <li>Расчёт чистой прибыли и маржинальности по каждому артикулу</li>
     <li>Автоматическое распознавание колонок отчёта WB</li>
     <li>Учёт возвратов, штрафов, логистики, хранения и эквайринга</li>
@@ -1967,5 +2166,34 @@ function cp(t){navigator.clipboard.writeText(t);alert('Скопировано');
 
 </script>
 
+
+<script>
+(function() {
+  const btn = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  const saved = localStorage.getItem('wb-theme');
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      root.setAttribute('data-theme', 'light');
+      if (btn) btn.textContent = '🌙';
+    } else {
+      root.removeAttribute('data-theme');
+      if (btn) btn.textContent = '☀️';
+    }
+  }
+
+  applyTheme(saved === 'light' ? 'light' : 'dark');
+
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const isLight = root.getAttribute('data-theme') === 'light';
+      const newTheme = isLight ? 'dark' : 'light';
+      applyTheme(newTheme);
+      localStorage.setItem('wb-theme', newTheme);
+    });
+  }
+})();
+</script>
 </body>
 </html>
