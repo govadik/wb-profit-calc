@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
- <meta name="description" content="Бесплатный калькулятор чистой прибыли для Wildberries. Считает прибыль, маржинальность, комиссию и логистику по детализации отчёта WB без API и подписки. Данные не уходят на сервер.">
+<meta name="description" content="Бесплатный калькулятор чистой прибыли для Wildberries. Считает прибыль, маржинальность, комиссию и логистику по детализации отчёта WB без API и подписки. Данные не уходят на сервер.">
 <meta name="keywords" content="калькулятор прибыли wildberries, калькулятор чистой прибыли вб, расчет прибыли вайлдберриз бесплатно, себестоимость wildberries, маржинальность wb, финансовый отчет wildberries анализ, калькулятор для селлеров wb, прибыль по артикулам wildberries">
 <meta name="author" content="Вадим Макаров">
 <meta name="robots" content="index, follow">
@@ -17,6 +17,7 @@
 <meta name="twitter:title" content="ВБ Калькулятор чистой прибыли">
 <meta name="twitter:description" content="Бесплатный калькулятор прибыли для продавцов Wildberries. Без API, без подписки, без рекламы, без регистрации и смс)">
 <script type="application/ld+json">
+
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
@@ -36,194 +37,587 @@
     "email": "govadik@gmail.com"
   }
 }
+
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ВБшка Калькулятор прибыли</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap');
+
+  :root {
+    --bg: #050508;
+    --bg-2: #0a0a12;
+    --bg-3: #12121f;
+    --surface: rgba(255,255,255,0.03);
+    --surface-hover: rgba(255,255,255,0.06);
+    --surface-active: rgba(255,255,255,0.1);
+    --glass: rgba(18,18,31,0.7);
+    --glass-border: rgba(255,255,255,0.06);
+    --text: #f8fafc;
+    --text-2: #94a3b8;
+    --text-3: #64748b;
+    --accent: #c084fc;
+    --accent-2: #a855f7;
+    --accent-3: #7c3aed;
+    --accent-glow: rgba(192,132,252,0.4);
+    --accent-glow-lg: rgba(192,132,252,0.15);
+    --success: #4ade80;
+    --success-glow: rgba(74,222,128,0.4);
+    --danger: #f87171;
+    --danger-glow: rgba(248,113,113,0.4);
+    --warning: #fbbf24;
+    --warning-glow: rgba(251,191,36,0.4);
+    --info: #60a5fa;
+    --info-glow: rgba(96,165,250,0.4);
+    --border: rgba(255,255,255,0.05);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --shadow: 0 8px 16px -4px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 25px 50px -12px rgb(0 0 0 / 0.6);
+    --shadow-glow: 0 0 60px rgba(192,132,252,0.2);
+    --radius: 24px;
+    --radius-sm: 16px;
+    --radius-xs: 12px;
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f0f2f5;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
     min-height: 100vh;
-    padding: 20px;
-    color: #1a1a2e;
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
   }
-  .app {
-    max-width: 1550px;
+
+  /* Animated aurora background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 10% 20%, rgba(124,58,237,0.25), transparent 60%),
+      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(168,85,247,0.15), transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(96,165,250,0.08), transparent 60%),
+      radial-gradient(ellipse 80% 30% at 70% 10%, rgba(52,211,153,0.06), transparent 60%);
+    animation: aurora 20s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes aurora {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    33% { transform: translate(30px, -20px) scale(1.1); opacity: 0.9; }
+    66% { transform: translate(-20px, 30px) scale(0.95); opacity: 1; }
+    100% { transform: translate(10px, 10px) scale(1.05); opacity: 0.9; }
+  }
+
+  /* Grid overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 80%);
+  }
+
+  /* Spotlight cursor effect container */
+  .spotlight {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(192,132,252,0.06), transparent 40%);
+    transition: background 0.3s ease;
+  }
+
+  /* Header */
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(5,5,8,0.7);
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 16px 24px;
+  }
+  .app-header-inner {
+    max-width: 1400px;
     margin: 0 auto;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    overflow: hidden;
-  }
-  .header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    color: white;
-    padding: 24px 32px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
     justify-content: space-between;
   }
-  .logo-wrap {
+  .brand {
     display: flex;
     align-items: center;
     gap: 14px;
-    flex-shrink: 0;
   }
-  .logo-svg {
-    width: 56px;
-    height: 56px;
-    flex-shrink: 0;
-  }
-  .logo-text {
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-3) 100%);
+    border-radius: 14px;
     display: flex;
-    flex-direction: column;
-  }
-  .logo-text h1 { font-size: 22px; margin-bottom: 2px; }
-  .logo-text .vm-badge {
-    display: inline-block;
-    background: rgba(123,44,191,0.9);
+    align-items: center;
+    justify-content: center;
     color: white;
+    font-weight: 900;
+    font-size: 14px;
+    font-family: 'Space Grotesk', sans-serif;
+    flex-shrink: 0;
+    box-shadow: 0 0 30px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+    animation: logoPulse 4s ease-in-out infinite;
+  }
+  @keyframes logoPulse {
+    0%, 100% { box-shadow: 0 0 30px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.2); }
+    50% { box-shadow: 0 0 50px var(--accent-glow), 0 0 80px rgba(192,132,252,0.15), inset 0 1px 0 rgba(255,255,255,0.3); }
+  }
+  .brand-logo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
+    animation: shine 3s ease-in-out infinite;
+  }
+  @keyframes shine {
+    0%, 100% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+  }
+  .brand-text h1 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .brand-text p {
     font-size: 11px;
+    color: var(--text-3);
+    margin-top: 3px;
+  }
+  .vm-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+    color: white;
+    font-size: 10px;
     font-weight: 700;
     padding: 2px 8px;
     border-radius: 4px;
-    letter-spacing: 1px;
-    width: fit-content;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 15px var(--accent-glow);
   }
-  .header p { color: #94a3b8; font-size: 13px; margin-top: 4px; }
-  .donate-header-btn { margin-left: auto; flex-shrink: 0; white-space: nowrap; }
-  .content { padding: 28px 32px; }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
 
-  .hint-box {
-    background: linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%);
-    border-left: 4px solid #3b82f6;
-    padding: 14px 18px;
-    border-radius: 0 12px 12px 0;
-    margin-bottom: 20px;
-    font-size: 14px;
-    color: #1e40af;
-    line-height: 1.6;
+  /* Layout */
+  .app {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    position: relative;
+    z-index: 2;
   }
-  .hint-box strong { color: #1e3a8a; }
 
-  .upload-area {
-    border: 2px dashed #cbd5e1;
-    border-radius: 14px;
-    padding: 40px;
-    text-align: center;
-    background: #f8fafc;
-    margin-bottom: 20px;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .upload-area:hover, .upload-area.dragover {
-    border-color: #7b2cbf;
-    background: #faf5ff;
-  }
-  .upload-area h3 { color: #334155; margin-bottom: 8px; font-size: 16px; }
-  .upload-area p { color: #64748b; font-size: 13px; margin-bottom: 12px; }
-  .upload-area input { display: none; }
+  /* Buttons */
   .btn {
-    padding: 10px 18px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: var(--radius-xs);
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: .2s;
+    transition: var(--transition-fast);
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
   }
-  .btn:hover { transform: translateY(-1px); }
-  .btn-primary { background: #7b2cbf; color: white; }
-  .btn-primary:hover { background: #5a1e8f; }
-  .btn-secondary { background: #e2e8f0; color: #334155; }
-  .btn-secondary:hover { background: #cbd5e1; }
-  .btn-success { background: #059669; color: white; }
-  .btn-success:hover { background: #047857; }
-  .btn-danger { background: #fee2e2; color: #991b1b; }
-  .btn-danger:hover { background: #fecaca; }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn:hover::before { opacity: 1; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0) scale(0.98); }
 
-  .paste-area { margin-bottom: 20px; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+    color: white;
+    box-shadow: 0 4px 20px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .btn-primary:hover { box-shadow: 0 8px 30px var(--accent-glow), 0 0 60px var(--accent-glow-lg), inset 0 1px 0 rgba(255,255,255,0.2); }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text-2);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+  }
+  .btn-secondary:hover { background: var(--surface-hover); border-color: rgba(255,255,255,0.12); color: var(--text); }
+
+  .btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 4px 20px var(--success-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .btn-success:hover { box-shadow: 0 8px 30px var(--success-glow); }
+
+  .btn-danger {
+    background: rgba(248,113,113,0.08);
+    color: var(--danger);
+    border: 1px solid rgba(248,113,113,0.15);
+  }
+  .btn-danger:hover { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.25); }
+
+  .btn-game {
+    background: transparent;
+    color: var(--text-3);
+    border: 1px solid transparent;
+    padding: 8px 10px;
+    font-size: 16px;
+    opacity: 0.4;
+    transition: var(--transition-fast);
+    filter: grayscale(0.5);
+  }
+  .btn-game:hover {
+    opacity: 1;
+    color: var(--accent);
+    border-color: var(--glass-border);
+    background: var(--surface);
+    filter: grayscale(0);
+    transform: translateY(-2px) scale(1.1);
+    text-shadow: 0 0 15px var(--accent-glow);
+  }
+
+  .btn-sm { padding: 8px 14px; font-size: 12px; }
+
+  /* Hint Box */
+  .hint-box {
+    background: linear-gradient(135deg, rgba(96,165,250,0.06), rgba(168,85,247,0.04));
+    border: 1px solid rgba(96,165,250,0.12);
+    border-radius: var(--radius-sm);
+    padding: 28px;
+    margin-bottom: 28px;
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.7;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  .hint-box::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--info), var(--accent));
+    border-radius: 3px 0 0 3px;
+    box-shadow: 0 0 20px var(--info-glow);
+  }
+  .hint-box strong { color: var(--text); }
+  .hint-box ol { margin-top: 12px; padding-left: 20px; }
+  .hint-box ol li { margin-bottom: 8px; }
+  .hint-box ol li strong { color: var(--accent); }
+  .hint-box a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .hint-box a:hover { border-bottom-color: var(--accent); }
+
+  /* Upload Area */
+  .upload-area {
+    border: 1.5px dashed rgba(168,85,247,0.25);
+    border-radius: var(--radius-sm);
+    padding: 64px 24px;
+    text-align: center;
+    background: var(--surface);
+    margin-bottom: 24px;
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    animation: slideUp 0.6s 0.1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  .upload-area::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-3), var(--info), var(--accent));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-sm) + 2px);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s;
+    animation: gradientShift 5s ease infinite;
+  }
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .upload-area:hover::before, .upload-area.dragover::before { opacity: 0.4; }
+  .upload-area:hover, .upload-area.dragover {
+    border-color: transparent;
+    background: rgba(168,85,247,0.04);
+    box-shadow: 0 0 60px var(--accent-glow-lg), inset 0 0 30px rgba(168,85,247,0.03);
+    transform: translateY(-2px);
+  }
+  .upload-area .icon {
+    font-size: 52px;
+    margin-bottom: 20px;
+    display: block;
+    filter: drop-shadow(0 0 20px var(--accent-glow));
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .upload-area h3 {
+    color: var(--text);
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .upload-area p { color: var(--text-3); font-size: 13px; margin-bottom: 24px; }
+  .upload-area input { display: none; }
+
+  /* Paste Area */
+  .paste-area { margin-bottom: 24px; animation: slideUp 0.6s 0.15s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
   .paste-area label {
     display: block;
     font-size: 13px;
     font-weight: 600;
-    color: #475569;
-    margin-bottom: 8px;
+    color: var(--text-2);
+    margin-bottom: 10px;
   }
   .paste-box {
     width: 100%;
     min-height: 100px;
-    padding: 14px;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xs);
     font-size: 13px;
-    font-family: monospace;
+    font-family: 'SF Mono', 'Fira Code', Monaco, monospace;
     resize: vertical;
-    background: #f8fafc;
+    background: var(--bg-2);
+    color: var(--text);
+    transition: var(--transition-fast);
   }
-  .paste-box:focus { outline: none; border-color: #7b2cbf; background: white; }
+  .paste-box:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(168,85,247,0.04);
+    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 30px var(--accent-glow-lg);
+  }
+  .paste-box::placeholder { color: var(--text-3); }
 
-  .formula-bar {
-    padding: 10px 16px;
-    border-radius: 10px;
-    margin-bottom: 16px;
+  /* Status & Formula */
+  .status-msg, .formula-bar {
+    padding: 16px 20px;
+    border-radius: var(--radius-xs);
     font-size: 13px;
+    margin-bottom: 20px;
     display: none;
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(20px);
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
   }
-  .formula-bar.show { display: block; }
-  .formula-bar.ok { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
-  .formula-bar.warn { background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; }
+  .status-msg.show, .formula-bar.show { display: block; }
+  .status-ok { background: rgba(74,222,128,0.06); color: var(--success); border-color: rgba(74,222,128,0.2); box-shadow: 0 0 30px rgba(74,222,128,0.05); }
+  .status-warn { background: rgba(251,191,36,0.06); color: var(--warning); border-color: rgba(251,191,36,0.2); box-shadow: 0 0 30px rgba(251,191,36,0.05); }
+  .status-err { background: rgba(248,113,113,0.06); color: var(--danger); border-color: rgba(248,113,113,0.2); box-shadow: 0 0 30px rgba(248,113,113,0.05); }
+  .formula-bar.ok { background: rgba(74,222,128,0.06); color: var(--success); border-color: rgba(74,222,128,0.2); }
+  .formula-bar.warn { background: rgba(251,191,36,0.06); color: var(--warning); border-color: rgba(251,191,36,0.2); }
 
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Cards - Bento Grid */
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 14px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
   }
   .card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 18px;
-    border-top: 3px solid #7b2cbf;
+    background: var(--glass);
+    border-radius: var(--radius-sm);
+    padding: 28px 24px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
   }
-  .card-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; margin-bottom: 6px; }
-  .card-value { font-size: 22px; font-weight: 800; color: #0f172a; }
-  .card-value.pos { color: #059669; }
-  .card-value.neg { color: #dc2626; }
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.2s; }
+  .card:nth-child(5) { animation-delay: 0.25s; grid-column: span 1; }
+  .card:nth-child(6) { animation-delay: 0.3s; }
 
-  .table-container { border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-3));
+    border-radius: 2px 2px 0 0;
+    opacity: 0.5;
+  }
+  .card.pos::before { background: linear-gradient(90deg, var(--success), #10b981); opacity: 0.8; box-shadow: 0 0 20px var(--success-glow); }
+  .card.neg::before { background: linear-gradient(90deg, var(--danger), #ef4444); opacity: 0.8; box-shadow: 0 0 20px var(--danger-glow); }
+  .card.neutral::before { background: linear-gradient(90deg, var(--text-3), #475569); opacity: 0.4; }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.03), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .card:hover::after { opacity: 1; }
+  .card:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: rgba(255,255,255,0.1);
+    box-shadow: var(--shadow-lg), 0 0 40px rgba(192,132,252,0.08);
+  }
+
+  .card-label {
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .card-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .card-value.pos { color: var(--success); text-shadow: 0 0 30px var(--success-glow); }
+  .card-value.neg { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
+
+  /* Table Container */
+  .table-container {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    animation: scaleIn 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
   .table-toolbar {
-    padding: 14px 18px;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--glass-border);
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
     align-items: center;
   }
-  .table-toolbar span { font-size: 13px; color: #64748b; margin-right: auto; }
+  .table-toolbar span {
+    font-size: 13px;
+    color: var(--text-3);
+    margin-right: auto;
+    font-weight: 500;
+  }
   .table-wrap { overflow: auto; max-height: 600px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1050px; }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+    min-width: 1050px;
+  }
   th {
-    background: #f1f5f9;
-    color: #334155;
+    background: rgba(255,255,255,0.02);
+    color: var(--text-2);
     font-weight: 700;
-    padding: 12px 8px;
+    padding: 16px 10px;
     text-align: right;
-    border-bottom: 2px solid #cbd5e1;
+    border-bottom: 1px solid var(--glass-border);
     position: sticky;
     top: 0;
     white-space: nowrap;
+    z-index: 10;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    backdrop-filter: blur(10px);
   }
   th:first-child { text-align: left; min-width: 110px; }
-
   th:nth-child(2), td:nth-child(2) { text-align: left; width: 90px; min-width: 90px; max-width: 90px; }
   th:nth-child(3), td:nth-child(3) { text-align: left; min-width: 180px; }
   th:nth-child(4), td:nth-child(4) { width: 55px; min-width: 55px; max-width: 55px; }
@@ -236,237 +630,691 @@
   th:nth-child(13), td:nth-child(13) { width: 50px; min-width: 50px; max-width: 50px; }
   th:nth-child(14), td:nth-child(14),
   th:nth-child(15), td:nth-child(15) { width: 75px; min-width: 75px; }
-  td { padding: 8px; border-bottom: 1px solid #f1f5f9; text-align: right; vertical-align: middle; }
-  td:first-child { text-align: left; min-width: 110px; }
 
-  tr:hover td { background: #f8fafc; }
-  tr:hover .del-btn { opacity: 1; }
+  td {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+    text-align: right;
+    vertical-align: middle;
+    transition: background 0.2s;
+    color: var(--text-2);
+  }
+  td:first-child { text-align: left; min-width: 110px; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  tr:hover .del-btn { opacity: 1; transform: scale(1); }
+
   .cell-input {
     width: 100%;
-    padding: 5px 7px;
-    border: 1px solid #e2e8f0;
-    border-radius: 5px;
+    padding: 8px 12px;
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
     font-size: 13px;
     text-align: right;
-    background: white;
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+    transition: var(--transition-fast);
+    font-variant-numeric: tabular-nums;
   }
-  .cell-input:focus { outline: none; border-color: #7b2cbf; }
+  .cell-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(168,85,247,0.06);
+    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 25px var(--accent-glow-lg);
+  }
   .cell-input.text-left { text-align: left; }
   .cell-input.cost {
-    background: #fffbeb;
-    border-color: #fbbf24;
+    background: rgba(251,191,36,0.06);
+    border-color: rgba(251,191,36,0.25);
     font-weight: 700;
+    color: var(--warning);
   }
-  .cell-input.cost:focus { background: white; border-color: #f59e0b; }
-  .profit { font-weight: 800; }
-  .profit-pos { color: #059669; }
-  .profit-neg { color: #dc2626; }
-  .profit-zero { color: #94a3b8; }
+  .cell-input.cost:focus {
+    background: rgba(251,191,36,0.1);
+    border-color: var(--warning);
+    box-shadow: 0 0 0 3px var(--warning-glow), 0 0 25px rgba(251,191,36,0.1);
+  }
+  .cell-input[readonly] {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text-3);
+    cursor: default;
+  }
+  .cell-input[readonly]:focus { outline: none; border-color: transparent; background: transparent; box-shadow: none; }
+
+  .profit { font-weight: 800; font-variant-numeric: tabular-nums; font-family: 'Space Grotesk', sans-serif; }
+  .profit-pos { color: var(--success); }
+  .profit-neg { color: var(--danger); }
+  .profit-zero { color: var(--text-3); }
+
   .del-btn {
     opacity: 0;
+    transform: scale(0.8);
     cursor: pointer;
-    color: #cbd5e1;
+    color: var(--text-3);
     font-size: 18px;
     background: none;
     border: none;
-    padding: 2px 6px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: var(--transition-fast);
   }
-  .del-btn:hover { color: #dc2626; }
-  .total-row { background: #f1f5f9 !important; font-weight: 700; }
-  .total-row td { border-top: 2px solid #94a3b8; font-size: 14px; }
-  .empty-state { text-align: center; padding: 50px; color: #94a3b8; }
-  .expense-row td { border-top: 1px dashed #cbd5e1; background: #fff7ed; font-size: 13px; }
-  .expense-row td:first-child { border-top: 1px dashed #cbd5e1; }
-  .empty-state h3 { color: #64748b; margin-bottom: 8px; }
+  .del-btn:hover { color: var(--danger); background: rgba(248,113,113,0.1); }
 
-  .status-msg {
-    padding: 12px 16px;
-    border-radius: 10px;
+  .total-row { background: rgba(255,255,255,0.02) !important; font-weight: 700; }
+  .total-row td { border-top: 2px solid rgba(255,255,255,0.08); font-size: 14px; color: var(--text); }
+  .expense-row td {
+    border-top: 1px dashed rgba(251,191,36,0.15);
+    background: rgba(251,191,36,0.02);
     font-size: 13px;
-    margin-bottom: 16px;
+    color: var(--warning);
+  }
+  .expense-row td:first-child { border-top: 1px dashed rgba(251,191,36,0.15); }
+
+  .empty-state {
+    text-align: center;
+    padding: 100px 24px;
+    color: var(--text-3);
+    background: transparent;
+  }
+  .empty-state h3 { color: var(--text-2); margin-bottom: 12px; font-size: 18px; font-weight: 600; }
+  .empty-state p { font-size: 14px; }
+
+  /* Security Section */
+  .security-section {
+    padding: 40px;
+    border: 1px solid rgba(74,222,128,0.1);
+    border-radius: var(--radius-sm);
+    margin-top: 24px;
+    background: linear-gradient(135deg, rgba(74,222,128,0.04), rgba(96,165,250,0.02));
+    backdrop-filter: blur(20px);
+    animation: scaleIn 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    position: relative;
+    overflow: hidden;
+  }
+  .security-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--success), var(--info));
+    box-shadow: 0 0 20px var(--success-glow);
+  }
+  .security-section h2 {
+    font-size: 20px;
+    color: var(--success);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 0 30px var(--success-glow);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .security-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .security-card {
+    background: var(--glass);
+    border: 1px solid rgba(74,222,128,0.12);
+    border-radius: var(--radius-sm);
+    padding: 28px;
+    backdrop-filter: blur(20px);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .security-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(74,222,128,0.03), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .security-card:hover::after { opacity: 1; }
+  .security-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(74,222,128,0.25);
+    box-shadow: 0 20px 40px rgba(74,222,128,0.08);
+  }
+  .security-card h3 {
+    font-size: 15px;
+    color: var(--success);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+  }
+  .security-card p {
+    color: var(--text-2);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* Donate Modal */
+  .donate-btn { float:right; background:#6a5cff; color:#fff; border:none; padding:10px 16px; border-radius:10px; cursor:pointer; }
+  #donateModal {
     display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(12px);
   }
-  .status-msg.show { display: block; }
-  .status-ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-  .status-warn { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
-  .status-err { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  #donateModal .box {
+    background: var(--bg-2);
+    padding: 36px;
+    border-radius: var(--radius-sm);
+    max-width: 440px;
+    width: 90%;
+    box-shadow: var(--shadow-lg), 0 0 60px rgba(192,132,252,0.1);
+    border: 1px solid var(--glass-border);
+    animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #donateModal .box h3 { margin-bottom: 24px; font-size: 20px; color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+  #donateModal .box p { margin-bottom: 16px; font-size: 14px; color: var(--text-2); }
+  .copy {
+    margin-left: 8px;
+    padding: 6px 14px;
+    font-size: 12px;
+    background: var(--surface);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-2);
+    transition: var(--transition-fast);
+  }
+  .copy:hover { background: var(--surface-hover); color: var(--text); }
+  #donateModal button[onclick="toggleDonate()"] {
+    margin-top: 16px;
+    padding: 12px 20px;
+    background: var(--surface);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-2);
+    transition: var(--transition-fast);
+    width: 100%;
+  }
+  #donateModal button[onclick="toggleDonate()"]:hover { background: var(--surface-hover); color: var(--text); }
 
-  .cell-input[readonly] {
-    background: #f1f5f9;
-    border-color: transparent;
-    color: #64748b;
-    cursor: default;
+  /* SEO Section */
+  #seo-about {
+    padding: 48px 40px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-2);
+    margin-top: 24px;
+    border-radius: var(--radius-sm);
+    animation: fadeIn 0.8s 0.4s backwards;
   }
-  .cell-input[readonly]:focus {
-    outline: none;
-    border-color: transparent;
-    background: #f1f5f9;
+  #seo-about h2 { font-size: 22px; color: var(--text); margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif; }
+  #seo-about h3 { font-size: 17px; color: var(--text-2); margin: 24px 0 12px; }
+  #seo-about h4 { font-size: 15px; color: var(--accent); margin: 14px 0 8px; }
+  #seo-about p { color: var(--text-2); font-size: 14px; line-height: 1.8; margin-bottom: 14px; }
+  #seo-about ul { color: var(--text-2); font-size: 14px; line-height: 1.8; margin-left: 20px; }
+  #seo-about li { margin-bottom: 8px; }
+
+  /* Scrollbar */
+  .table-wrap::-webkit-scrollbar { height: 8px; width: 8px; }
+  .table-wrap::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 4px; }
+  .table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+  .table-wrap::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+  html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent; }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .card:nth-child(5) { grid-column: span 1; }
+  }
+  @media (max-width: 768px) {
+    .app { padding: 20px 16px; }
+    .app-header { padding: 12px 16px; }
+    .app-header-inner { flex-wrap: wrap; gap: 12px; }
+    .header-actions { width: 100%; justify-content: flex-start; }
+    .cards { grid-template-columns: 1fr; }
+    .card { padding: 22px 18px; }
+    .card-value { font-size: 24px; }
+    .security-grid { grid-template-columns: 1fr; }
+    .hint-box { padding: 20px; font-size: 13px; }
+    .upload-area { padding: 48px 16px; }
+    .security-section { padding: 28px; }
+    #seo-about { padding: 32px 24px; }
+  }
+  @media (max-width: 480px) {
+    .brand-text h1 { font-size: 15px; }
+    .card-value { font-size: 22px; }
   }
 
+  /* SEO Section - Super Modern */
+  #seo-about {
+    padding: 48px 40px;
+    border: 1px solid var(--glass-border);
+    background: linear-gradient(135deg, rgba(168,85,247,0.04), rgba(96,165,250,0.02));
+    margin-top: 24px;
+    border-radius: var(--radius-sm);
+    animation: fadeIn 0.8s 0.4s backwards;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(24px);
+  }
+  #seo-about::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-3), var(--info), var(--accent));
+    background-size: 300% 300%;
+    animation: gradientShift 5s ease infinite;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+  .seo-hero h2 {
+    font-size: 24px;
+    color: var(--text);
+    margin-bottom: 20px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    line-height: 1.3;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .seo-hero p {
+    color: var(--text-2);
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .seo-hero p strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .seo-hero p strong:nth-of-type(2),
+  .seo-hero p strong:nth-of-type(3) {
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--accent-glow);
+  }
+  .seo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-top: 32px;
+  }
+  .seo-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 28px;
+    backdrop-filter: blur(20px);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .seo-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-3));
+    opacity: 0.5;
+    box-shadow: 0 0 15px var(--accent-glow);
+  }
+  .seo-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(192,132,252,0.03), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .seo-card:hover::after { opacity: 1; }
+  .seo-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 40px rgba(192,132,252,0.06);
+  }
+  .seo-card h3 {
+    font-size: 16px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .seo-card h3::before {
+    content: '◆';
+    color: var(--accent);
+    font-size: 10px;
+    text-shadow: 0 0 10px var(--accent-glow);
+  }
+  .seo-card ul {
+    color: var(--text-2);
+    font-size: 14px;
+    line-height: 1.8;
+    margin-left: 0;
+    list-style: none;
+    padding: 0;
+  }
+  .seo-card ul li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+  }
+  .seo-card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+    text-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  @media (max-width: 768px) {
+    #seo-about { padding: 32px 24px; }
+    .seo-hero h2 { font-size: 20px; }
+    .seo-grid { grid-template-columns: 1fr; }
+    .seo-card { padding: 22px; }
+  }
 </style>
-<base target="_blank">
 <base target="_blank">
 </head>
 <body>
 
-<div class="app">
-  <div class="header">
-    <div class="logo-wrap">
-      <div class="logo-text">
+<div class="spotlight" id="spotlight"></div>
+
+<header class="app-header">
+  <div class="app-header-inner">
+    <div class="brand">
+      <div class="brand-logo">ВБ</div>
+      <div class="brand-text">
         <h1>Калькулятор чистой прибыли</h1>
-        <span class="vm-badge">ВБшка</span>
-        <p>Имя автора - Вадим Макаров версия 1.1<br>Связь с автором: govadik@gmail.com</p>
-        <p>Загружайте еженедельный отчёт из личного кабинета — без API-ключа, сохранить на компьютер нажмите Ctrl+S (или Cmd+S на Mac)</p>
+        <p><span class="vm-badge">ВБшка</span> Автор: Вадим Макаров · govadik@gmail.com</p>
       </div>
     </div>
-     <a href="https://govadik.github.io/wb-profit-calc/instruction.html" target="_blank" class="btn btn-secondary donate-header-btn" style="margin-right:10px;">📘 Инструкция</a>
-    <a href="https://t.me/wb_profit_calc" target="_blank" class="btn btn-primary donate-header-btn" style="margin-right:10px; background:#0088cc;">📢 Telegram</a>
-    <button class="btn btn-success donate-header-btn" onclick="toggleDonate()">💝 Отблагодарить</button>
+    <div class="header-actions">
+      <a href="https://govadik.github.io/wb-profit-calc/instruction.html" target="_blank" class="btn btn-secondary btn-sm">📘 Инструкция</a>
+      <a href="https://t.me/wb_profit_calc" target="_blank" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0088cc, #005f8f);">📢 Telegram</a>
+      <button class="btn btn-success btn-sm" onclick="toggleDonate()">💝 Отблагодарить</button>
+      <button class="btn btn-game" onclick="openSnake()" title="Мини-игра для перерыва">🎮</button>
+    </div>
+  </div>
+</header>
+
+<div class="app">
+
+  <div class="hint-box">
+    <strong>Как пользоваться:</strong>
+    <ol>
+      <li>Скачайте <strong>детализацию</strong> еженедельного отчёта в ЛК WB (Финансы → Финансовые отчёты → Детализация → Скачать Excel)</li>
+      <li>Перетащите файл сюда <strong>или</strong> скопируйте данные из Excel и вставьте (Ctrl+V) в поле ниже</li>
+      <li>В жёлтые ячейки введите закупочную цену за 1 шт. — прибыль посчитается автоматически</li>
+      <li>Кнопка «💰 Цены → Excel» выгружает список себестоимости, «📥 Цены ← Excel» — загружает такой файл обратно</li>
+    </ol>
+    <p style="margin-top:10px;"><a href="https://govadik.github.io/wb-profit-calc/instruction.html" target="_blank">📘 Подробная инструкция по использованию →</a></p>
   </div>
 
-  <div class="content">
-    <div class="hint-box">
-      <strong>Как пользоваться:</strong>
-      <ol style="margin-top:6px; padding-left:18px;">
-        <li>Скачайте <strong>детализацию</strong> еженедельного отчёта в ЛК WB (Финансы → Финансовые отчёты → Детализация → Скачать Excel)</li>
-        <li>Перетащите файл сюда <strong>или</strong> скопируйте данные из Excel и вставьте (Ctrl+V) в поле ниже</li>
-        <li>В жёлтые ячейки введите закупочную цену за 1 шт. — прибыль посчитается автоматически</li>
-        <li>Кнопка «💰 Цены → Excel» выгружает список себестоимости (Название / Артикул поставщика / Код номенклатуры / Себестоимость), «📥 Цены ← Excel» — загружает такой файл обратно</li>
-      </ol>
-      <p style="margin-top:8px;"><a href="https://govadik.github.io/wb-profit-calc/instruction.html" target="_blank" style="color:#1e3a8a; font-weight:600;">📘 Подробная инструкция по использованию →</a></p>
+  <div class="status-msg status-ok show" id="status-ok">✅ Загружено 0 артикулов. Загрузите отчёт WB или нажмите «Демо».</div>
+  <div class="status-msg status-warn" id="status-warn"></div>
+  <div class="status-msg status-err" id="status-err"></div>
+
+  <div class="formula-bar show ok" id="formula-bar">Формула прибыли: (К перечислению − Логистика − Хранение − Штрафы − Прочие удержания) − (Себестоимость × Кол-во). «Прочие удержания» включают операции при приёмке, программу лояльности и корректировки ВВ.</div>
+
+  <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
+    <span class="icon">📁</span>
+    <h3>Перетащите файл сюда или нажмите для выбора</h3>
+    <p>Поддерживаются: .xlsx, .xls, .csv (отчёты Wildberries)</p>
+    <button class="btn btn-primary">Выбрать файл</button>
+    <input type="file" id="file-input" accept=".xlsx,.xls,.csv" onchange="handleFile(event)">
+  </div>
+
+  <div class="paste-area">
+    <label>📋 Или вставьте данные из Excel (выделите всё в отчёте → Ctrl+C → сюда Ctrl+V):</label>
+    <textarea class="paste-box" id="paste-input" readonly placeholder="Артикул поставщика  Наименование товара  Кол-во  Цена розничная  ..."></textarea>
+    <div style="margin-top:8px; text-align:right;">
+      <button class="btn btn-secondary" onclick="handlePaste()">Обработать вставку</button>
     </div>
+  </div>
 
-    <div class="status-msg status-ok" id="status-ok"></div>
-    <div class="status-msg status-warn" id="status-warn"></div>
-    <div class="status-msg status-err" id="status-err"></div>
-
-    <div class="formula-bar" id="formula-bar"></div>
-
-
-
-    <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
-      <h3>📁 Перетащите файл сюда или нажмите для выбора</h3>
-      <p>Поддерживаются: .xlsx, .xls, .csv (отчёты Wildberries)</p>
-      <button class="btn btn-primary">Выбрать файл</button>
-      <input type="file" id="file-input" accept=".xlsx,.xls,.csv" onchange="handleFile(event)">
+  <div class="cards">
+    <div class="card neutral">
+      <div class="card-label">Продажа</div>
+      <div class="card-value" id="sum-revenue">0 ₽</div>
     </div>
-
-    <div class="paste-area">
-      <label>📋 Или вставьте данные из Excel (выделите всё в отчёте → Ctrl+C → сюда Ctrl+V):</label>
-      <textarea class="paste-box" id="paste-input" readonly placeholder="Артикул поставщика  Наименование товара  Кол-во  Цена розничная  ..."></textarea>
-      <div style="margin-top:8px; text-align:right;">
-        <button class="btn btn-secondary" onclick="handlePaste()">Обработать вставку</button>
-      </div>
+    <div class="card neutral">
+      <div class="card-label">К перечислению</div>
+      <div class="card-value" id="sum-topay">0 ₽</div>
     </div>
-
-    <div class="cards">
-      <div class="card"><div class="card-label">Продажа</div><div class="card-value" id="sum-revenue">0 ₽</div></div>
-      <div class="card"><div class="card-label">К перечислению</div><div class="card-value" id="sum-topay">0 ₽</div></div>
-      <div class="card"><div class="card-label">Расходы WB</div><div class="card-value neg" id="sum-expenses">0 ₽</div></div>
-      <div class="card"><div class="card-label">Себестоимость</div><div class="card-value neg" id="sum-cost">0 ₽</div></div>
-      <div class="card"><div class="card-label">Чистая прибыль</div><div class="card-value" id="sum-profit">0 ₽</div></div>
-      <div class="card"><div class="card-label">Маржинальность</div><div class="card-value" id="sum-margin">0 %</div></div>
+    <div class="card neg">
+      <div class="card-label">Расходы WB</div>
+      <div class="card-value neg" id="sum-expenses">0 ₽</div>
     </div>
-
-    <div class="table-container">
-      <div class="table-toolbar">
-        <span id="row-count">0 артикулов</span>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="addRow()">➕ Добавить</button>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="loadDemo()">📊 Демо</button>
-        <button class="btn btn-success" style="padding:6px 12px; font-size:12px;" onclick="downloadCSV()">📤 CSV</button>
-        <button class="btn btn-success" style="padding:6px 12px; font-size:12px;" onclick="downloadPricesExcel()" title="Выгрузить закупочные цены в Excel: Название / Артикул поставщика / Код номенклатуры / Себестоимость">💰 Цены → Excel</button>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="document.getElementById('prices-file-input').click()" title="Загрузить закупочные цены из Excel">📥 Цены ← Excel</button>
-        <input type="file" id="prices-file-input" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handlePricesFile(event)">
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="clearAll()">🗑 Очистить</button>
-      </div>
-      <div class="table-wrap">
-        <table id="main-table">
-          <thead>
-            <tr>
-              <th>Артикул поставщика</th>
-              <th>Код номенклатуры</th>
-              <th>Название</th>
-              <th>Кол-во</th>
-              <th>Продажа</th>
-              <th>К перечислению</th>
-              <th style="background:#fef3c7; color:#92400e;">Себестоимость</th>
-              <th>Прибыль</th>
-              <th>Маржа</th>
-              <th>Комиссия</th>
-              <th>Логистика</th>
-              <th>Хранение</th>
-              <th>Штрафы</th>
-              <th>Эквайринг</th>
-              <th>Прочие удержания</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-          <tfoot>
-            <tr class="total-row">
-              <td colspan="3"><strong>ИТОГО</strong></td>
-              <td id="t-qty">0</td>
-              <td id="t-revenue">0</td>
-              <td id="t-topay">0</td>
-              <td id="t-cost">0</td>
-              <td id="t-profit">0</td>
-              <td id="t-margin">0%</td>
-              <td colspan="6"></td>
-              <td></td>
-            </tr>
-            <tr class="total-row expense-row">
-              <td colspan="9" style="text-align:left; padding-left:16px; color:#92400e;"><strong>в т.ч. Затраты WB</strong></td>
-              <td id="t-commission">0</td>
-              <td id="t-logistics">0</td>
-              <td id="t-storage">0</td>
-              <td id="t-penalty">0</td>
-              <td id="t-acquiring">0</td>
-              <td id="t-otherPayments">0</td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
-        <div class="empty-state" id="empty-state">
-          <h3>📭 Таблица пуста</h3>
-          <p>Загрузите отчёт WB или нажмите «Демо»</p>
-        </div>
-      </div>
+    <div class="card neg">
+      <div class="card-label">Себестоимость</div>
+      <div class="card-value neg" id="sum-cost">0 ₽</div>
     </div>
+    <div class="card pos">
+      <div class="card-label">Чистая прибыль</div>
+      <div class="card-value pos" id="sum-profit">0 ₽</div>
+    </div>
+    <div class="card pos">
+      <div class="card-label">Маржинальность</div>
+      <div class="card-value pos" id="sum-margin">0.0 %</div>
+    </div>
+  </div>
 
-    <div class="table-container" style="margin-top:20px;">
-      <div class="table-toolbar">
-        <span id="history-count">История: 0 отчётов</span>
-        <button class="btn btn-success" style="padding:6px 12px; font-size:12px;" onclick="downloadHistoryCSV()">📤 Скачать историю (CSV)</button>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="clearHistory()">🗑 Очистить историю</button>
-        <button class="btn btn-danger" style="padding:6px 12px; font-size:12px;" onclick="fullClear()">🗑 Полная очистка цен и истории</button>
-      </div>
-      <div class="table-wrap">
-        <table id="history-table" style="min-width:900px;">
-          <thead>
-            <tr>
-              <th style="text-align:left; min-width:180px;">Дата / период</th>
-              <th style="text-align:left; min-width:120px;">Номер отчёта</th>
-              <th>Кол-во</th>
-              <th>Продажа</th>
-              <th>Расходы WB</th>
-              <th>Себестоимость</th>
-              <th>Чистая прибыль</th>
-              <th>Маржа</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="history-tbody"></tbody>
-        </table>
-        <div class="empty-state" id="history-empty-state">
-          <h3>📭 История пуста</h3>
-          <p>Заполните «Номер отчёта» и нажмите «Сохранить в историю»</p>
-        </div>
+  <div class="table-container">
+    <div class="table-toolbar">
+      <span id="row-count">0 артикулов</span>
+      <button class="btn btn-secondary btn-sm" onclick="addRow()">➕ Добавить</button>
+      <button class="btn btn-secondary btn-sm" onclick="loadDemo()">📊 Демо</button>
+      <button class="btn btn-success btn-sm" onclick="downloadCSV()">📤 CSV</button>
+      <button class="btn btn-success btn-sm" onclick="downloadPricesExcel()" title="Выгрузить закупочные цены в Excel">💰 Цены → Excel</button>
+      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('prices-file-input').click()" title="Загрузить закупочные цены из Excel">📥 Цены ← Excel</button>
+      <input type="file" id="prices-file-input" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handlePricesFile(event)">
+      <button class="btn btn-secondary btn-sm" onclick="clearAll()">🗑 Очистить</button>
+    </div>
+    <div class="table-wrap">
+      <table id="main-table" style="display: none;">
+        <thead>
+          <tr>
+            <th>Артикул поставщика</th>
+            <th>Код номенклатуры</th>
+            <th>Название</th>
+            <th>Кол-во</th>
+            <th>Продажа</th>
+            <th>К перечислению</th>
+            <th style="background: rgba(251,191,36,0.06); color: var(--warning);">Себестоимость</th>
+            <th>Прибыль</th>
+            <th>Маржа</th>
+            <th>Комиссия</th>
+            <th>Логистика</th>
+            <th>Хранение</th>
+            <th>Штрафы</th>
+            <th>Эквайринг</th>
+            <th>Прочие удержания</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="3"><strong>ИТОГО</strong></td>
+            <td id="t-qty">0</td>
+            <td id="t-revenue">0</td>
+            <td id="t-topay">0</td>
+            <td id="t-cost">0</td>
+            <td id="t-profit" style="color: var(--success);">0</td>
+            <td id="t-margin">0.0%</td>
+            <td colspan="6"></td>
+            <td></td>
+          </tr>
+          <tr class="total-row expense-row">
+            <td colspan="9" style="text-align:left; padding-left:16px; color: var(--warning);"><strong>в т.ч. Затраты WB</strong></td>
+            <td id="t-commission">0</td>
+            <td id="t-logistics">0</td>
+            <td id="t-storage">0</td>
+            <td id="t-penalty">0</td>
+            <td id="t-acquiring">0</td>
+            <td id="t-otherPayments">0</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="empty-state" id="empty-state">
+        <h3>📭 Таблица пуста</h3>
+        <p>Загрузите отчёт WB или нажмите «Демо»</p>
       </div>
     </div>
   </div>
+
+  <div class="table-container">
+    <div class="table-toolbar">
+      <span id="history-count">История: 0 отчётов</span>
+      <button class="btn btn-success btn-sm" onclick="downloadHistoryCSV()">📤 Скачать историю (CSV)</button>
+      <button class="btn btn-secondary btn-sm" onclick="clearHistory()">🗑 Очистить историю</button>
+      <button class="btn btn-danger btn-sm" onclick="fullClear()">🗑 Полная очистка цен и истории</button>
+    </div>
+    <div class="table-wrap">
+      <table id="history-table" style="min-width: 900px; display: none;">
+        <thead>
+          <tr>
+            <th style="text-align:left; min-width:180px;">Дата / период</th>
+            <th style="text-align:left; min-width:120px;">Номер отчёта</th>
+            <th>Кол-во</th>
+            <th>Продажа</th>
+            <th>Расходы WB</th>
+            <th>Себестоимость</th>
+            <th>Чистая прибыль</th>
+            <th>Маржа</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="history-tbody"></tbody>
+      </table>
+      <div class="empty-state" id="history-empty-state">
+        <h3>📭 История пуста</h3>
+        <p>Заполните «Номер отчёта» и нажмите «Сохранить в историю»</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="security-section">
+    <h2>🔒 Ваши данные защищены</h2>
+    <div class="security-grid">
+      <div class="security-card">
+        <h3>📍 Локальная обработка</h3>
+        <p>Все вычисления, разбор Excel/CSV файлов и подстановка себестоимости происходят прямо на вашем компьютере при помощи JavaScript. Данные финансового отчета не передаются в интернет.</p>
+      </div>
+      <div class="security-card">
+        <h3>🔑 Отсутствие API</h3>
+        <p>Инструмент не запрашивает API-ключи от личного кабинета Wildberries. Это исключает риск кражи токенов или несанкционированного доступа к вашему магазину.</p>
+      </div>
+      <div class="security-card">
+        <h3>💾 Хранение в браузере</h3>
+        <p>Введенная себестоимость артикулов сохраняется локально на вашем устройстве (в LocalStorage браузера). Она не отправляется на сторонние сервера.</p>
+      </div>
+    </div>
+  </section>
+
+<section id="seo-about">
+  <div class="seo-hero">
+    <h2>Бесплатный калькулятор прибыли для продавцов и менеджеров на маркетплейсе Wildberries</h2>
+    <p>
+      <strong>ВБ Калькулятор чистой прибыли</strong> — это бесплатный онлайн-инструмент для продавцов маркетплейса Wildberries.
+      Загрузите еженедельный финансовый отчёт из личного кабинета ВБ (Финансы → Финансовые отчёты → Детализация),
+      введите закупочную цену (себестоимость) на каждый артикул, и калькулятор мгновенно рассчитает
+      <strong>чистую прибыль</strong>, <strong>маржинальность</strong>, комиссию ВБ, логистику, хранение, штрафы и эквайринг.
+    </p>
+    <p>
+      В отличие от платных аналитических сервисов, наш калькулятор работает полностью в браузере —
+      <strong>данные не уходят на сервер</strong>, не требуется API-ключ Wildberries и никакой подписки.
+      Себестоимость товаров сохраняется между сессиями, поэтому при загрузке следующего отчёта цены подставляются автоматически.
+    </p>
+    <p>
+      Калькулятор умеет обрабатывать возвраты, корректировки, операции на приёмке и программу лояльности.
+      Результаты можно выгрузить в CSV или Excel. Для удобства ведения учёта доступна история отчётов
+      с сохранением динамики прибыли по неделям.
+    </p>
+  </div>
+
+  <div class="seo-grid">
+    <div class="seo-card">
+      <h3>Кому подходит</h3>
+      <ul>
+        <li>Селлерам Wildberries, которые хотят быстро проверить реальную прибыль без сложных сервисов</li>
+        <li>Новичкам, которые только начинают продавать на WB и ищут бесплатный инструмент для финансового контроля</li>
+        <li>Крупным продавцам для сверки данных с платными аналитиками</li>
+        <li>Бухгалтерам и менеджерам по закупкам для расчёта себестоимости и маржинальности</li>
+      </ul>
+    </div>
+    <div class="seo-card">
+      <h3>Ключевые возможности</h3>
+      <ul>
+        <li>Расчёт чистой прибыли и маржинальности по каждому артикулу</li>
+        <li>Автоматическое распознавание колонок отчёта WB</li>
+        <li>Учёт возвратов, штрафов, логистики, хранения и эквайринга</li>
+        <li>Сохранение закупочных цен между отчётами</li>
+        <li>История финансовых отчётов с динамикой показателей</li>
+        <li>Выгрузка и загрузка себестоимости через Excel</li>
+        <li>Экспорт результатов в CSV</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 </div>
 
+<div id="donateModal"><div class="box"><h3>Поддержать автора</h3>
+<p><b>MIR:</b> 9112 3810 5464 4216 <button class='copy' onclick="cp('9112381054644216')">Копировать</button></p>
+<p><b>IBAN:</b> BY26ALFA30143442900020270000 <button class='copy' onclick="cp('BY26ALFA30143442900020270000')">Копировать</button></p>
+<button onclick="toggleDonate()">Закрыть</button></div></div>
+
 <script>
+// Spotlight cursor effect
+document.addEventListener('mousemove', (e) => {
+  const spotlight = document.getElementById('spotlight');
+  if (spotlight) {
+    spotlight.style.setProperty('--x', e.clientX + 'px');
+    spotlight.style.setProperty('--y', e.clientY + 'px');
+  }
+});
+
+// Card spotlight effect
+document.querySelectorAll('.card, .security-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--mouse-x', x + '%');
+    card.style.setProperty('--mouse-y', y + '%');
+  });
+});
+</script>
+
+<script>
+
 // ==================== STATE ====================
 let rows = [];
 let nextId = 1;
@@ -1281,74 +2129,321 @@ function hideStatus() {
 }
 
 init();
+
 </script>
 
-<style>
-.donate-btn{float:right;background:#6a5cff;color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer}
-#donateModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);align-items:center;justify-content:center}
-#donateModal .box{background:#fff;padding:20px;border-radius:12px;max-width:420px;width:90%}
-.copy{margin-left:8px}
-</style>
 <script>
+
 function toggleDonate(){let m=document.getElementById('donateModal');m.style.display=m.style.display==='flex'?'none':'flex';}
 function cp(t){navigator.clipboard.writeText(t);alert('Скопировано');}
+
 </script>
-<div id="donateModal"><div class="box"><h3>Поддержать автора</h3>
-<p><b>MIR:</b> 9112 3810 5464 4216 <button class='copy' onclick="cp('9112381054644216')">Копировать</button></p>
-<p><b>IBAN:</b> BY26ALFA30143442900020270000 <button class='copy' onclick="cp('BY26ALFA30143442900020270000')">Копировать</button></p>
-<button onclick="toggleDonate()">Закрыть</button></div></div>
-<section style="padding:28px 32px; border-top:1px solid #e2e8f0; background:#f0fdf4;">
-  <h2 style="font-size:18px; color:#166534; margin-bottom:16px;">🔒 Ваши данные защищены</h2>
-  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
-    <div style="background:white; border:1px solid #bbf7d0; border-radius:12px; padding:16px;">
-      <h3 style="font-size:14px; color:#15803d; margin-bottom:8px;">📍 Локальная обработка</h3>
-      <p style="color:#475569; font-size:13px; line-height:1.6;">Все вычисления, разбор Excel/CSV файлов и подстановка себестоимости происходят прямо на вашем компьютере при помощи JavaScript. Данные финансового отчета не передаются в интернет.</p>
+
+
+
+<!-- Hidden Snake Game -->
+<div id="snake-overlay" style="display:none; position:fixed; inset:0; background:rgba(5,5,8,0.95); backdrop-filter:blur(20px); z-index:2000; align-items:center; justify-content:center; flex-direction:column;">
+  <div style="position:relative; padding:20px;">
+    <canvas id="snake-canvas" width="400" height="400" style="border:2px solid rgba(168,85,247,0.3); border-radius:16px; box-shadow:0 0 60px rgba(168,85,247,0.2), 0 0 120px rgba(168,85,247,0.1);"></canvas>
+
+    <div id="snake-hud" style="display:none; position:absolute; top:-50px; left:0; right:0; justify-content:space-between; align-items:center; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600;">
+      <span style="color:var(--accent); text-shadow:0 0 15px var(--accent-glow);">🐍 Snake</span>
+      <span id="snake-level-display" style="color:var(--text-3);">Уровень: Лёгкий</span>
+      <span id="snake-score" style="color:var(--accent); text-shadow:0 0 15px var(--accent-glow);">Score: 0</span>
     </div>
-    <div style="background:white; border:1px solid #bbf7d0; border-radius:12px; padding:16px;">
-      <h3 style="font-size:14px; color:#15803d; margin-bottom:8px;">🔑 Отсутствие API</h3>
-      <p style="color:#475569; font-size:13px; line-height:1.6;">Инструмент не запрашивает API-ключи от личного кабинета Wildberries. Это исключает риск кражи токенов или несанкционированного доступа к вашему магазину.</p>
+
+    <!-- Level Select -->
+    <div id="snake-level-select" style="position:absolute; inset:0; background:rgba(5,5,8,0.88); border-radius:16px; flex-direction:column; align-items:center; justify-content:center; gap:20px; display:flex;">
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:800; color:var(--accent); text-shadow:0 0 30px var(--accent-glow);">🐍 SNAKE</div>
+      <div style="font-size:13px; color:var(--text-3); text-align:center; line-height:1.6;">Выберите уровень сложности</div>
+      <div style="display:flex; flex-direction:column; gap:10px; width:220px;">
+        <button onclick="startSnakeGame('easy')" class="btn btn-primary" style="width:100%; padding:12px; font-size:14px; justify-content:center;">🌱 Лёгкий</button>
+        <button onclick="startSnakeGame('medium')" class="btn btn-primary" style="width:100%; padding:12px; font-size:14px; justify-content:center; background:linear-gradient(135deg, #f59e0b, #d97706);">🔥 Средний</button>
+        <button onclick="startSnakeGame('hard')" class="btn btn-primary" style="width:100%; padding:12px; font-size:14px; justify-content:center; background:linear-gradient(135deg, #ef4444, #b91c1c);">💀 Сложный</button>
+      </div>
+      <button onclick="closeSnake()" class="btn btn-secondary" style="padding:8px 20px; font-size:12px;">❌ Закрыть</button>
     </div>
-    <div style="background:white; border:1px solid #bbf7d0; border-radius:12px; padding:16px;">
-      <h3 style="font-size:14px; color:#15803d; margin-bottom:8px;">💾 Хранение в браузере</h3>
-      <p style="color:#475569; font-size:13px; line-height:1.6;">Введенная себестоимость артикулов сохраняется локально на вашем устройстве (в LocalStorage браузера). Она не отправляется на сторонние сервера.</p>
+
+    <!-- Game Over -->
+    <div id="snake-gameover" style="display:none; position:absolute; inset:0; background:rgba(5,5,8,0.9); border-radius:16px; flex-direction:column; align-items:center; justify-content:center; gap:14px;">
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:800; color:var(--danger); text-shadow:0 0 30px var(--danger-glow);">GAME OVER</div>
+      <div id="snake-final-score" style="font-size:16px; color:var(--text);">Score: 0</div>
+      <div id="snake-final-level" style="font-size:13px; color:var(--text-3);">Уровень: Лёгкий</div>
+      <div style="display:flex; gap:10px; margin-top:4px;">
+        <button onclick="showLevelSelect()" class="btn btn-primary" style="padding:10px 24px; font-size:14px;">🔄 Ещё раз</button>
+        <button onclick="closeSnake()" class="btn btn-secondary" style="padding:10px 20px; font-size:14px;">❌ Закрыть</button>
+      </div>
+    </div>
+
+    <!-- Pause -->
+    <div id="snake-pause" style="display:none; position:absolute; inset:0; background:rgba(5,5,8,0.85); border-radius:16px; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; color:var(--warning); text-shadow:0 0 20px var(--warning-glow);">⏸ ПАУЗА</div>
+      <div style="font-size:13px; color:var(--text-3);">Нажмите P или ESC чтобы продолжить</div>
+      <button onclick="resumeSnake()" class="btn btn-primary" style="padding:10px 28px; font-size:14px;">▶ Продолжить</button>
+      <button onclick="showLevelSelect()" class="btn btn-secondary" style="padding:8px 20px; font-size:13px;">🔄 Новая игра</button>
     </div>
   </div>
-</section>
- <section id="seo-about" style="padding:40px 32px; border-top:1px solid #e2e8f0; background:#f8fafc;">
-  <h2 style="font-size:20px; color:#1a1a2e; margin-bottom:16px;">Бесплатный калькулятор прибыли для продавцов и менеджеров на маркетплейсе Wildberries</h2>
-  <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
-    <strong>ВБ Калькулятор чистой прибыли</strong> — это бесплатный онлайн-инструмент для продавцов маркетплейса Wildberries.
-    Загрузите еженедельный финансовый отчёт из личного кабинета ВБ (Финансы → Финансовые отчёты → Детализация),
-    введите закупочную цену (себестоимость) на каждый артикул, и калькулятор мгновенно рассчитает
-    <strong>чистую прибыль</strong>, <strong>маржинальность</strong>, комиссию ВБ, логистику, хранение, штрафы и эквайринг.
-  </p>
-  <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
-    В отличие от платных аналитических сервисов, наш калькулятор работает полностью в браузере —
-    <strong>данные не уходят на сервер</strong>, не требуется API-ключ Wildberries и никакой подписки.
-    Себестоимость товаров сохраняется между сессиями, поэтому при загрузке следующего отчёта цены подставляются автоматически.
-  </p>
-  <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
-    Калькулятор умеет обрабатывать возвраты, корректировки, операции на приёмке и программу лояльности.
-    Результаты можно выгрузить в CSV или Excel. Для удобства ведения учёта доступна история отчётов
-    с сохранением динамики прибыли по неделям.
-  </p>
-  <h3 style="font-size:16px; color:#334155; margin:20px 0 10px;">Кому подходит</h3>
-  <ul style="color:#475569; font-size:14px; line-height:1.7; margin-left:20px;">
-    <li>Селлерам Wildberries, которые хотят быстро проверить реальную прибыль без сложных сервисов</li>
-    <li>Новичкам, которые только начинают продавать на WB и ищут бесплатный инструмент для финансового контроля</li>
-    <li>Крупным продавцам для сверки данных с платными аналитиками</li>
-    <li>Бухгалтерам и менеджерам по закупкам для расчёта себестоимости и маржинальности</li>
-  </ul>
-  <h3 style="font-size:16px; color:#334155; margin:20px 0 10px;">Ключевые возможности</h3>
-  <ul style="color:#475569; font-size:14px; line-height:1.7; margin-left:20px;">
-    <li>Расчёт чистой прибыли и маржинальности по каждому артикулу</li>
-    <li>Автоматическое распознавание колонок отчёта WB</li>
-    <li>Учёт возвратов, штрафов, логистики, хранения и эквайринга</li>
-    <li>Сохранение закупочных цен между отчётами</li>
-    <li>История финансовых отчётов с динамикой показателей</li>
-    <li>Выгрузка и загрузка себестоимости через Excel</li>
-    <li>Экспорт результатов в CSV</li>
-  </ul>
-</section>
-</body>
-</html>
+
+  <div style="margin-top:16px; display:flex; gap:24px; font-size:12px; color:var(--text-3);">
+    <span>⬆⬇⬅➡ или WASD — управление</span>
+    <span>P — пауза</span>
+    <span>ESC — выход</span>
+  </div>
+</div>
+
+// ==================== HIDDEN SNAKE GAME ====================
+let snakeCanvas, snakeCtx, snakeGame, snakeScore = 0, snakeRunning = false, snakePaused = false;
+let snake = [], snakeDir = {x:1,y:0}, snakeNextDir = {x:1,y:0}, snakeFood = {}, snakeGrid = 20, snakeSize = 20;
+let snakeLevel = 'easy', snakeSpeed = 150;
+
+const SNAKE_LEVELS = {
+  easy:   { speed: 160, name: 'Лёгкий',   color: '#4ade80' },
+  medium: { speed: 110, name: 'Средний',  color: '#fbbf24' },
+  hard:   { speed: 70,  name: 'Сложный',  color: '#f87171' }
+};
+
+function initSnake() {
+  snakeCanvas = document.getElementById('snake-canvas');
+  if (!snakeCanvas) return;
+  snakeCtx = snakeCanvas.getContext('2d');
+}
+
+function resetSnake() {
+  const cfg = SNAKE_LEVELS[snakeLevel];
+  snakeSpeed = cfg.speed;
+  snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+  snakeDir = {x:1,y:0};
+  snakeNextDir = {x:1,y:0};
+  snakeScore = 0;
+  placeFood();
+  updateSnakeHUD();
+}
+
+function updateSnakeHUD() {
+  const scoreEl = document.getElementById('snake-score');
+  const levelEl = document.getElementById('snake-level-display');
+  if (scoreEl) scoreEl.textContent = 'Score: ' + snakeScore;
+  if (levelEl) levelEl.textContent = 'Уровень: ' + SNAKE_LEVELS[snakeLevel].name;
+}
+
+function placeFood() {
+  const maxX = snakeCanvas.width / snakeGrid;
+  const maxY = snakeCanvas.height / snakeGrid;
+  do {
+    snakeFood = {
+      x: Math.floor(Math.random() * maxX),
+      y: Math.floor(Math.random() * maxY)
+    };
+  } while (snake.some(s => s.x === snakeFood.x && s.y === snakeFood.y));
+}
+
+function drawSnake() {
+  snakeCtx.fillStyle = '#0a0a12';
+  snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+
+  // Subtle grid
+  snakeCtx.strokeStyle = 'rgba(168,85,247,0.02)';
+  snakeCtx.lineWidth = 1;
+  for (let i = 0; i <= snakeCanvas.width; i += snakeGrid) {
+    snakeCtx.beginPath(); snakeCtx.moveTo(i,0); snakeCtx.lineTo(i,snakeCanvas.height); snakeCtx.stroke();
+    snakeCtx.beginPath(); snakeCtx.moveTo(0,i); snakeCtx.lineTo(snakeCanvas.width,i); snakeCtx.stroke();
+  }
+
+  // Snake body
+  snake.forEach((seg, i) => {
+    const alpha = Math.max(0.3, 1 - (i / snake.length) * 0.7);
+    const isHead = i === 0;
+    snakeCtx.shadowBlur = isHead ? 18 : 0;
+    snakeCtx.shadowColor = isHead ? '#c084fc' : 'transparent';
+    snakeCtx.fillStyle = isHead ? '#c084fc' : `rgba(192,132,252,${alpha})`;
+    const pad = isHead ? 0 : 1;
+    snakeCtx.fillRect(
+      seg.x * snakeGrid + pad,
+      seg.y * snakeGrid + pad,
+      snakeSize - pad*2,
+      snakeSize - pad*2
+    );
+    snakeCtx.shadowBlur = 0;
+  });
+
+  // Food
+  const foodColor = SNAKE_LEVELS[snakeLevel].color;
+  snakeCtx.shadowBlur = 25;
+  snakeCtx.shadowColor = foodColor;
+  snakeCtx.fillStyle = foodColor;
+  snakeCtx.beginPath();
+  snakeCtx.arc(
+    snakeFood.x * snakeGrid + snakeGrid/2,
+    snakeFood.y * snakeGrid + snakeGrid/2,
+    snakeSize/2 - 3, 0, Math.PI * 2
+  );
+  snakeCtx.fill();
+  snakeCtx.shadowBlur = 0;
+}
+
+function updateSnake() {
+  snakeDir = {...snakeNextDir};
+  const head = {x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y};
+
+  const maxX = snakeCanvas.width / snakeGrid;
+  const maxY = snakeCanvas.height / snakeGrid;
+
+  // Wall collision
+  if (head.x < 0 || head.x >= maxX || head.y < 0 || head.y >= maxY) {
+    gameOverSnake();
+    return;
+  }
+  // Self collision
+  if (snake.some(s => s.x === head.x && s.y === head.y)) {
+    gameOverSnake();
+    return;
+  }
+
+  snake.unshift(head);
+
+  if (head.x === snakeFood.x && head.y === snakeFood.y) {
+    snakeScore += (snakeLevel === 'easy' ? 10 : snakeLevel === 'medium' ? 15 : 20);
+    updateSnakeHUD();
+    placeFood();
+  } else {
+    snake.pop();
+  }
+}
+
+function gameLoopSnake() {
+  if (snakePaused) return;
+  updateSnake();
+  drawSnake();
+}
+
+function gameOverSnake() {
+  snakeRunning = false;
+  clearInterval(snakeGame);
+  document.getElementById('snake-gameover').style.display = 'flex';
+  document.getElementById('snake-final-score').textContent = 'Score: ' + snakeScore;
+  document.getElementById('snake-final-level').textContent = 'Уровень: ' + SNAKE_LEVELS[snakeLevel].name;
+}
+
+function showLevelSelect() {
+  snakeRunning = false;
+  clearInterval(snakeGame);
+  document.getElementById('snake-level-select').style.display = 'flex';
+  document.getElementById('snake-gameover').style.display = 'none';
+  document.getElementById('snake-pause').style.display = 'none';
+  document.getElementById('snake-hud').style.display = 'none';
+}
+
+function startSnakeGame(level) {
+  snakeLevel = level || 'easy';
+  document.getElementById('snake-level-select').style.display = 'none';
+  document.getElementById('snake-gameover').style.display = 'none';
+  document.getElementById('snake-pause').style.display = 'none';
+  document.getElementById('snake-hud').style.display = 'flex';
+  resetSnake();
+  drawSnake();
+  snakeRunning = true;
+  snakePaused = false;
+  snakeGame = setInterval(gameLoopSnake, snakeSpeed);
+}
+
+function pauseSnake() {
+  if (!snakeRunning) return;
+  snakePaused = !snakePaused;
+  const pauseEl = document.getElementById('snake-pause');
+  if (snakePaused) {
+    pauseEl.style.display = 'flex';
+  } else {
+    pauseEl.style.display = 'none';
+  }
+}
+
+function resumeSnake() {
+  snakePaused = false;
+  document.getElementById('snake-pause').style.display = 'none';
+}
+
+function restartSnake() {
+  showLevelSelect();
+}
+
+function closeSnake() {
+  snakeRunning = false;
+  snakePaused = false;
+  clearInterval(snakeGame);
+  document.getElementById('snake-overlay').style.display = 'none';
+}
+
+function openSnake() {
+  const overlay = document.getElementById('snake-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  if (!snakeCanvas) initSnake();
+  showLevelSelect();
+}
+
+// Keyboard controls
+let snakeKeyBuffer = '';
+document.addEventListener('keydown', (e) => {
+  // Secret word
+  if (!snakeRunning && e.key.length === 1) {
+    snakeKeyBuffer += e.key.toLowerCase();
+    if (snakeKeyBuffer.length > 10) snakeKeyBuffer = snakeKeyBuffer.slice(-10);
+    if (snakeKeyBuffer.includes('snake')) {
+      snakeKeyBuffer = '';
+      openSnake();
+    }
+  }
+
+  if (!snakeRunning) return;
+
+  // Pause
+  if (e.key === 'p' || e.key === 'P' || e.key === 'з' || e.key === 'З') {
+    e.preventDefault();
+    pauseSnake();
+    return;
+  }
+
+  // Exit
+  if (e.key === 'Escape') {
+    if (snakePaused) { resumeSnake(); return; }
+    closeSnake();
+    return;
+  }
+
+  if (snakePaused) return;
+
+  // Direction (prevent 180° turns)
+  switch(e.key) {
+    case 'ArrowUp': case 'w': case 'W': case 'ц': case 'Ц':
+      if (snakeDir.y !== 1) snakeNextDir = {x:0,y:-1};
+      break;
+    case 'ArrowDown': case 's': case 'S': case 'ы': case 'Ы':
+      if (snakeDir.y !== -1) snakeNextDir = {x:0,y:1};
+      break;
+    case 'ArrowLeft': case 'a': case 'A': case 'ф': case 'Ф':
+      if (snakeDir.x !== 1) snakeNextDir = {x:-1,y:0};
+      break;
+    case 'ArrowRight': case 'd': case 'D': case 'в': case 'В':
+      if (snakeDir.x !== -1) snakeNextDir = {x:1,y:0};
+      break;
+  }
+});
+
+// Logo easter egg
+let logoClicks = 0;
+setTimeout(() => {
+  const logo = document.querySelector('.brand-logo');
+  if (logo) {
+    logo.style.cursor = 'pointer';
+    logo.addEventListener('click', () => {
+      logoClicks++;
+      if (logoClicks >= 5) {
+        logoClicks = 0;
+        openSnake();
+      }
+    });
+  }
+}, 1000);
+
+console.log('%c🐍 Секретная игра активирована!', 'color:#c084fc; font-size:16px; font-weight:bold;');
+console.log('%cНаберите "snake" на клавиатуре или кликните логотип "ВБ" 5 раз', 'color:#94a3b8; font-size:12px;');
