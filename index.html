@@ -36,7 +36,7 @@
     "email": "govadik@gmail.com"
   }
 }
-</script> 
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ВБшка Калькулятор прибыли</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -64,6 +64,7 @@
     display: flex;
     align-items: center;
     gap: 20px;
+    justify-content: space-between;
   }
   .logo-wrap {
     display: flex;
@@ -93,7 +94,6 @@
     width: fit-content;
   }
   .header p { color: #94a3b8; font-size: 13px; margin-top: 4px; }
-  .header { justify-content: space-between; }
   .donate-header-btn { margin-left: auto; flex-shrink: 0; white-space: nowrap; }
   .content { padding: 28px 32px; }
 
@@ -223,7 +223,7 @@
     white-space: nowrap;
   }
   th:first-child { text-align: left; min-width: 110px; }
-  
+
   th:nth-child(2), td:nth-child(2) { text-align: left; width: 90px; min-width: 90px; max-width: 90px; }
   th:nth-child(3), td:nth-child(3) { text-align: left; min-width: 180px; }
   th:nth-child(4), td:nth-child(4) { width: 55px; min-width: 55px; max-width: 55px; }
@@ -238,7 +238,7 @@
   th:nth-child(15), td:nth-child(15) { width: 75px; min-width: 75px; }
   td { padding: 8px; border-bottom: 1px solid #f1f5f9; text-align: right; vertical-align: middle; }
   td:first-child { text-align: left; min-width: 110px; }
-  
+
   tr:hover td { background: #f8fafc; }
   tr:hover .del-btn { opacity: 1; }
   .cell-input {
@@ -305,6 +305,7 @@
 
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -341,7 +342,7 @@
 
     <div class="formula-bar" id="formula-bar"></div>
 
-    
+
 
     <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
       <h3>📁 Перетащите файл сюда или нажмите для выбора</h3>
@@ -979,23 +980,23 @@ function updateTotals() {
 }
 
 // ==================== CRUD ====================
-function update(id, field, value) { 
-  const r = rows.find(x => x.id === id); 
-  if (r) { 
-    r[field] = value; 
+function update(id, field, value) {
+  const r = rows.find(x => x.id === id);
+  if (r) {
+    r[field] = value;
     if (field === 'cost' && r.article) {
       costByArticle[r.article] = Number(value) || 0;
       saveCosts();
     }
-    save(); 
-    render(); 
-  } 
+    save();
+    render();
+  }
 }
 function removeRow(id) { rows = rows.filter(x => x.id !== id); save(); render(); }
-function addRow() { 
-  rows.push({ id: nextId++, article: '', nomCode: '', name: '', qty: 0, revenue: 0, commission: 0, logistics: 0, storage: 0, penalty: 0, acquiring: 0, otherPayments: 0, toPay: 0, cost: 0 }); 
-  save(); 
-  render(); 
+function addRow() {
+  rows.push({ id: nextId++, article: '', nomCode: '', name: '', qty: 0, revenue: 0, commission: 0, logistics: 0, storage: 0, penalty: 0, acquiring: 0, otherPayments: 0, toPay: 0, cost: 0 });
+  save();
+  render();
 }
 function clearAll() { if (!confirm('Очистить всё?')) return; rows = []; nextId = 1; save(); render(); }
 function loadDemo() {
@@ -1316,19 +1317,19 @@ function cp(t){navigator.clipboard.writeText(t);alert('Скопировано');
  <section id="seo-about" style="padding:40px 32px; border-top:1px solid #e2e8f0; background:#f8fafc;">
   <h2 style="font-size:20px; color:#1a1a2e; margin-bottom:16px;">Бесплатный калькулятор прибыли для продавцов и менеджеров на маркетплейсе Wildberries</h2>
   <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
-    <strong>ВБ Калькулятор чистой прибыли</strong> — это бесплатный онлайн-инструмент для продавцов маркетплейса Wildberries. 
-    Загрузите еженедельный финансовый отчёт из личного кабинета ВБ (Финансы → Финансовые отчёты → Детализация), 
-    введите закупочную цену (себестоимость) на каждый артикул, и калькулятор мгновенно рассчитает 
+    <strong>ВБ Калькулятор чистой прибыли</strong> — это бесплатный онлайн-инструмент для продавцов маркетплейса Wildberries.
+    Загрузите еженедельный финансовый отчёт из личного кабинета ВБ (Финансы → Финансовые отчёты → Детализация),
+    введите закупочную цену (себестоимость) на каждый артикул, и калькулятор мгновенно рассчитает
     <strong>чистую прибыль</strong>, <strong>маржинальность</strong>, комиссию ВБ, логистику, хранение, штрафы и эквайринг.
   </p>
   <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
-    В отличие от платных аналитических сервисов, наш калькулятор работает полностью в браузере — 
-    <strong>данные не уходят на сервер</strong>, не требуется API-ключ Wildberries и никакой подписки. 
+    В отличие от платных аналитических сервисов, наш калькулятор работает полностью в браузере —
+    <strong>данные не уходят на сервер</strong>, не требуется API-ключ Wildberries и никакой подписки.
     Себестоимость товаров сохраняется между сессиями, поэтому при загрузке следующего отчёта цены подставляются автоматически.
   </p>
   <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
-    Калькулятор умеет обрабатывать возвраты, корректировки, операции на приёмке и программу лояльности. 
-    Результаты можно выгрузить в CSV или Excel. Для удобства ведения учёта доступна история отчётов 
+    Калькулятор умеет обрабатывать возвраты, корректировки, операции на приёмке и программу лояльности.
+    Результаты можно выгрузить в CSV или Excel. Для удобства ведения учёта доступна история отчётов
     с сохранением динамики прибыли по неделям.
   </p>
   <h3 style="font-size:16px; color:#334155; margin:20px 0 10px;">Кому подходит</h3>
