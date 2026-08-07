@@ -1295,7 +1295,24 @@ function cp(t){navigator.clipboard.writeText(t);alert('Скопировано');
 <p><b>MIR:</b> 9112 3810 5464 4216 <button class='copy' onclick="cp('9112381054644216')">Копировать</button></p>
 <p><b>IBAN:</b> BY26ALFA30143442900020270000 <button class='copy' onclick="cp('BY26ALFA30143442900020270000')">Копировать</button></p>
 <button onclick="toggleDonate()">Закрыть</button></div></div>
-<section id="seo-about" style="padding:40px 32px; border-top:1px solid #e2e8f0; background:#f8fafc;">
+<section style="padding:28px 32px; border-top:1px solid #e2e8f0; background:#f0fdf4;">
+  <h2 style="font-size:18px; color:#166534; margin-bottom:16px;">🔒 Ваши данные защищены</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+    <div style="background:white; border:1px solid #bbf7d0; border-radius:12px; padding:16px;">
+      <h3 style="font-size:14px; color:#15803d; margin-bottom:8px;">📍 Локальная обработка</h3>
+      <p style="color:#475569; font-size:13px; line-height:1.6;">Все вычисления, разбор Excel/CSV файлов и подстановка себестоимости происходят прямо на вашем компьютере при помощи JavaScript. Данные финансового отчета не передаются в интернет.</p>
+    </div>
+    <div style="background:white; border:1px solid #bbf7d0; border-radius:12px; padding:16px;">
+      <h3 style="font-size:14px; color:#15803d; margin-bottom:8px;">🔑 Отсутствие API</h3>
+      <p style="color:#475569; font-size:13px; line-height:1.6;">Инструмент не запрашивает API-ключи от личного кабинета Wildberries. Это исключает риск кражи токенов или несанкционированного доступа к вашему магазину.</p>
+    </div>
+    <div style="background:white; border:1px solid #bbf7d0; border-radius:12px; padding:16px;">
+      <h3 style="font-size:14px; color:#15803d; margin-bottom:8px;">💾 Хранение в браузере</h3>
+      <p style="color:#475569; font-size:13px; line-height:1.6;">Введенная себестоимость артикулов сохраняется локально на вашем устройстве (в LocalStorage браузера). Она не отправляется на сторонние сервера.</p>
+    </div>
+  </div>
+</section>
+ <section id="seo-about" style="padding:40px 32px; border-top:1px solid #e2e8f0; background:#f8fafc;">
   <h2 style="font-size:20px; color:#1a1a2e; margin-bottom:16px;">Бесплатный калькулятор прибыли для продавцов и менеджеров на маркетплейсе Wildberries</h2>
   <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
     <strong>ВБ Калькулятор чистой прибыли</strong> — это бесплатный онлайн-инструмент для продавцов маркетплейса Wildberries. 
