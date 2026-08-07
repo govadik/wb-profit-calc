@@ -303,26 +303,6 @@
   }
   .btn-danger:hover { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.25); }
 
-  .btn-game {
-    background: transparent;
-    color: var(--text-3);
-    border: 1px solid transparent;
-    padding: 8px 10px;
-    font-size: 16px;
-    opacity: 0.4;
-    transition: var(--transition-fast);
-    filter: grayscale(0.5);
-  }
-  .btn-game:hover {
-    opacity: 1;
-    color: var(--accent);
-    border-color: var(--glass-border);
-    background: var(--surface);
-    filter: grayscale(0);
-    transform: translateY(-2px) scale(1.1);
-    text-shadow: 0 0 15px var(--accent-glow);
-  }
-
   .btn-sm { padding: 8px 14px; font-size: 12px; }
 
   /* Hint Box */
@@ -896,149 +876,7 @@
     .brand-text h1 { font-size: 15px; }
     .card-value { font-size: 22px; }
   }
-
-  /* SEO Section - Super Modern */
-  #seo-about {
-    padding: 48px 40px;
-    border: 1px solid var(--glass-border);
-    background: linear-gradient(135deg, rgba(168,85,247,0.04), rgba(96,165,250,0.02));
-    margin-top: 24px;
-    border-radius: var(--radius-sm);
-    animation: fadeIn 0.8s 0.4s backwards;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(24px);
-  }
-  #seo-about::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-3), var(--info), var(--accent));
-    background-size: 300% 300%;
-    animation: gradientShift 5s ease infinite;
-    box-shadow: 0 0 20px var(--accent-glow);
-  }
-  .seo-hero h2 {
-    font-size: 24px;
-    color: var(--text);
-    margin-bottom: 20px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    line-height: 1.3;
-    background: linear-gradient(135deg, var(--text) 0%, var(--accent-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .seo-hero p {
-    color: var(--text-2);
-    font-size: 15px;
-    line-height: 1.8;
-    margin-bottom: 16px;
-  }
-  .seo-hero p strong {
-    color: var(--text);
-    font-weight: 600;
-  }
-  .seo-hero p strong:nth-of-type(2),
-  .seo-hero p strong:nth-of-type(3) {
-    color: var(--accent);
-    text-shadow: 0 0 20px var(--accent-glow);
-  }
-  .seo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 20px;
-    margin-top: 32px;
-  }
-  .seo-card {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-sm);
-    padding: 28px;
-    backdrop-filter: blur(20px);
-    transition: var(--transition);
-    position: relative;
-    overflow: hidden;
-  }
-  .seo-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-3));
-    opacity: 0.5;
-    box-shadow: 0 0 15px var(--accent-glow);
-  }
-  .seo-card::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(192,132,252,0.03), transparent 50%);
-    opacity: 0;
-    transition: opacity 0.4s;
-    pointer-events: none;
-  }
-  .seo-card:hover::after { opacity: 1; }
-  .seo-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255,255,255,0.1);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 40px rgba(192,132,252,0.06);
-  }
-  .seo-card h3 {
-    font-size: 16px;
-    color: var(--accent);
-    margin-bottom: 16px;
-    font-weight: 700;
-    font-family: 'Space Grotesk', sans-serif;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .seo-card h3::before {
-    content: '◆';
-    color: var(--accent);
-    font-size: 10px;
-    text-shadow: 0 0 10px var(--accent-glow);
-  }
-  .seo-card ul {
-    color: var(--text-2);
-    font-size: 14px;
-    line-height: 1.8;
-    margin-left: 0;
-    list-style: none;
-    padding: 0;
-  }
-  .seo-card ul li {
-    margin-bottom: 10px;
-    padding-left: 20px;
-    position: relative;
-  }
-  .seo-card ul li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-    font-weight: 700;
-    text-shadow: 0 0 10px var(--accent-glow);
-  }
-
-  @media (max-width: 768px) {
-    #seo-about { padding: 32px 24px; }
-    .seo-hero h2 { font-size: 20px; }
-    .seo-grid { grid-template-columns: 1fr; }
-    .seo-card { padding: 22px; }
-  }
 </style>
-<base target="_blank">
 </head>
 <body>
 
@@ -1057,7 +895,6 @@
       <a href="https://govadik.github.io/wb-profit-calc/instruction.html" target="_blank" class="btn btn-secondary btn-sm">📘 Инструкция</a>
       <a href="https://t.me/wb_profit_calc" target="_blank" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0088cc, #005f8f);">📢 Telegram</a>
       <button class="btn btn-success btn-sm" onclick="toggleDonate()">💝 Отблагодарить</button>
-      <button class="btn btn-game" onclick="openSnake()" title="Мини-игра для перерыва">🎮</button>
     </div>
   </div>
 </header>
@@ -1238,50 +1075,41 @@
     </div>
   </section>
 
-<section id="seo-about">
-  <div class="seo-hero">
-    <h2>Бесплатный калькулятор прибыли для продавцов и менеджеров на маркетплейсе Wildberries</h2>
-    <p>
-      <strong>ВБ Калькулятор чистой прибыли</strong> — это бесплатный онлайн-инструмент для продавцов маркетплейса Wildberries.
-      Загрузите еженедельный финансовый отчёт из личного кабинета ВБ (Финансы → Финансовые отчёты → Детализация),
-      введите закупочную цену (себестоимость) на каждый артикул, и калькулятор мгновенно рассчитает
-      <strong>чистую прибыль</strong>, <strong>маржинальность</strong>, комиссию ВБ, логистику, хранение, штрафы и эквайринг.
-    </p>
-    <p>
-      В отличие от платных аналитических сервисов, наш калькулятор работает полностью в браузере —
-      <strong>данные не уходят на сервер</strong>, не требуется API-ключ Wildberries и никакой подписки.
-      Себестоимость товаров сохраняется между сессиями, поэтому при загрузке следующего отчёта цены подставляются автоматически.
-    </p>
-    <p>
-      Калькулятор умеет обрабатывать возвраты, корректировки, операции на приёмке и программу лояльности.
-      Результаты можно выгрузить в CSV или Excel. Для удобства ведения учёта доступна история отчётов
-      с сохранением динамики прибыли по неделям.
-    </p>
-  </div>
-
-  <div class="seo-grid">
-    <div class="seo-card">
-      <h3>Кому подходит</h3>
-      <ul>
-        <li>Селлерам Wildberries, которые хотят быстро проверить реальную прибыль без сложных сервисов</li>
-        <li>Новичкам, которые только начинают продавать на WB и ищут бесплатный инструмент для финансового контроля</li>
-        <li>Крупным продавцам для сверки данных с платными аналитиками</li>
-        <li>Бухгалтерам и менеджерам по закупкам для расчёта себестоимости и маржинальности</li>
-      </ul>
-    </div>
-    <div class="seo-card">
-      <h3>Ключевые возможности</h3>
-      <ul>
-        <li>Расчёт чистой прибыли и маржинальности по каждому артикулу</li>
-        <li>Автоматическое распознавание колонок отчёта WB</li>
-        <li>Учёт возвратов, штрафов, логистики, хранения и эквайринга</li>
-        <li>Сохранение закупочных цен между отчётами</li>
-        <li>История финансовых отчётов с динамикой показателей</li>
-        <li>Выгрузка и загрузка себестоимости через Excel</li>
-        <li>Экспорт результатов в CSV</li>
-      </ul>
-    </div>
-  </div>
+<section id="seo-about" style="padding:40px 32px; border-top:1px solid #e2e8f0; background:#f8fafc;">
+  <h2 style="font-size:20px; color:#1a1a2e; margin-bottom:16px;">Бесплатный калькулятор прибыли для продавцов и менеджеров на маркетплейсе Wildberries</h2>
+  <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
+    <strong>ВБ Калькулятор чистой прибыли</strong> — это бесплатный онлайн-инструмент для продавцов маркетплейса Wildberries.
+    Загрузите еженедельный финансовый отчёт из личного кабинета ВБ (Финансы → Финансовые отчёты → Детализация),
+    введите закупочную цену (себестоимость) на каждый артикул, и калькулятор мгновенно рассчитает
+    <strong>чистую прибыль</strong>, <strong>маржинальность</strong>, комиссию ВБ, логистику, хранение, штрафы и эквайринг.
+  </p>
+  <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
+    В отличие от платных аналитических сервисов, наш калькулятор работает полностью в браузере —
+    <strong>данные не уходят на сервер</strong>, не требуется API-ключ Wildberries и никакой подписки.
+    Себестоимость товаров сохраняется между сессиями, поэтому при загрузке следующего отчёта цены подставляются автоматически.
+  </p>
+  <p style="color:#475569; font-size:14px; line-height:1.7; margin-bottom:12px;">
+    Калькулятор умеет обрабатывать возвраты, корректировки, операции на приёмке и программу лояльности.
+    Результаты можно выгрузить в CSV или Excel. Для удобства ведения учёта доступна история отчётов
+    с сохранением динамики прибыли по неделям.
+  </p>
+  <h3 style="font-size:16px; color:#334155; margin:20px 0 10px;">Кому подходит</h3>
+  <ul style="color:#475569; font-size:14px; line-height:1.7; margin-left:20px;">
+    <li>Селлерам Wildberries, которые хотят быстро проверить реальную прибыль без сложных сервисов</li>
+    <li>Новичкам, которые только начинают продавать на WB и ищут бесплатный инструмент для финансового контроля</li>
+    <li>Крупным продавцам для сверки данных с платными аналитиками</li>
+    <li>Бухгалтерам и менеджерам по закупкам для расчёта себестоимости и маржинальности</li>
+  </ul>
+  <h3 style="font-size:16px; color:#334155; margin:20px 0 10px;">Ключевые возможности</h3>
+  <ul style="color:#475569; font-size:14px; line-height:1.7; margin-left:20px;">
+    <li>Расчёт чистой прибыли и маржинальности по каждому артикулу</li>
+    <li>Автоматическое распознавание колонок отчёта WB</li>
+    <li>Учёт возвратов, штрафов, логистики, хранения и эквайринга</li>
+    <li>Сохранение закупочных цен между отчётами</li>
+    <li>История финансовых отчётов с динамикой показателей</li>
+    <li>Выгрузка и загрузка себестоимости через Excel</li>
+    <li>Экспорт результатов в CSV</li>
+  </ul>
 </section>
 
 </div>
@@ -2139,311 +1967,5 @@ function cp(t){navigator.clipboard.writeText(t);alert('Скопировано');
 
 </script>
 
-
-
-<!-- Hidden Snake Game -->
-<div id="snake-overlay" style="display:none; position:fixed; inset:0; background:rgba(5,5,8,0.95); backdrop-filter:blur(20px); z-index:2000; align-items:center; justify-content:center; flex-direction:column;">
-  <div style="position:relative; padding:20px;">
-    <canvas id="snake-canvas" width="400" height="400" style="border:2px solid rgba(168,85,247,0.3); border-radius:16px; box-shadow:0 0 60px rgba(168,85,247,0.2), 0 0 120px rgba(168,85,247,0.1);"></canvas>
-
-    <div id="snake-hud" style="display:none; position:absolute; top:-50px; left:0; right:0; justify-content:space-between; align-items:center; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600;">
-      <span style="color:var(--accent); text-shadow:0 0 15px var(--accent-glow);">🐍 Snake</span>
-      <span id="snake-level-display" style="color:var(--text-3);">Уровень: Лёгкий</span>
-      <span id="snake-score" style="color:var(--accent); text-shadow:0 0 15px var(--accent-glow);">Score: 0</span>
-    </div>
-
-    <!-- Level Select -->
-    <div id="snake-level-select" style="position:absolute; inset:0; background:rgba(5,5,8,0.88); border-radius:16px; flex-direction:column; align-items:center; justify-content:center; gap:20px; display:flex;">
-      <div style="font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:800; color:var(--accent); text-shadow:0 0 30px var(--accent-glow);">🐍 SNAKE</div>
-      <div style="font-size:13px; color:var(--text-3); text-align:center; line-height:1.6;">Выберите уровень сложности</div>
-      <div style="display:flex; flex-direction:column; gap:10px; width:220px;">
-        <button onclick="startSnakeGame('easy')" class="btn btn-primary" style="width:100%; padding:12px; font-size:14px; justify-content:center;">🌱 Лёгкий</button>
-        <button onclick="startSnakeGame('medium')" class="btn btn-primary" style="width:100%; padding:12px; font-size:14px; justify-content:center; background:linear-gradient(135deg, #f59e0b, #d97706);">🔥 Средний</button>
-        <button onclick="startSnakeGame('hard')" class="btn btn-primary" style="width:100%; padding:12px; font-size:14px; justify-content:center; background:linear-gradient(135deg, #ef4444, #b91c1c);">💀 Сложный</button>
-      </div>
-      <button onclick="closeSnake()" class="btn btn-secondary" style="padding:8px 20px; font-size:12px;">❌ Закрыть</button>
-    </div>
-
-    <!-- Game Over -->
-    <div id="snake-gameover" style="display:none; position:absolute; inset:0; background:rgba(5,5,8,0.9); border-radius:16px; flex-direction:column; align-items:center; justify-content:center; gap:14px;">
-      <div style="font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:800; color:var(--danger); text-shadow:0 0 30px var(--danger-glow);">GAME OVER</div>
-      <div id="snake-final-score" style="font-size:16px; color:var(--text);">Score: 0</div>
-      <div id="snake-final-level" style="font-size:13px; color:var(--text-3);">Уровень: Лёгкий</div>
-      <div style="display:flex; gap:10px; margin-top:4px;">
-        <button onclick="showLevelSelect()" class="btn btn-primary" style="padding:10px 24px; font-size:14px;">🔄 Ещё раз</button>
-        <button onclick="closeSnake()" class="btn btn-secondary" style="padding:10px 20px; font-size:14px;">❌ Закрыть</button>
-      </div>
-    </div>
-
-    <!-- Pause -->
-    <div id="snake-pause" style="display:none; position:absolute; inset:0; background:rgba(5,5,8,0.85); border-radius:16px; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
-      <div style="font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; color:var(--warning); text-shadow:0 0 20px var(--warning-glow);">⏸ ПАУЗА</div>
-      <div style="font-size:13px; color:var(--text-3);">Нажмите P или ESC чтобы продолжить</div>
-      <button onclick="resumeSnake()" class="btn btn-primary" style="padding:10px 28px; font-size:14px;">▶ Продолжить</button>
-      <button onclick="showLevelSelect()" class="btn btn-secondary" style="padding:8px 20px; font-size:13px;">🔄 Новая игра</button>
-    </div>
-  </div>
-
-  <div style="margin-top:16px; display:flex; gap:24px; font-size:12px; color:var(--text-3);">
-    <span>⬆⬇⬅➡ или WASD — управление</span>
-    <span>P — пауза</span>
-    <span>ESC — выход</span>
-  </div>
-</div>
-
-// ==================== HIDDEN SNAKE GAME ====================
-let snakeCanvas, snakeCtx, snakeGame, snakeScore = 0, snakeRunning = false, snakePaused = false;
-let snake = [], snakeDir = {x:1,y:0}, snakeNextDir = {x:1,y:0}, snakeFood = {}, snakeGrid = 20, snakeSize = 20;
-let snakeLevel = 'easy', snakeSpeed = 150;
-
-const SNAKE_LEVELS = {
-  easy:   { speed: 160, name: 'Лёгкий',   color: '#4ade80' },
-  medium: { speed: 110, name: 'Средний',  color: '#fbbf24' },
-  hard:   { speed: 70,  name: 'Сложный',  color: '#f87171' }
-};
-
-function initSnake() {
-  snakeCanvas = document.getElementById('snake-canvas');
-  if (!snakeCanvas) return;
-  snakeCtx = snakeCanvas.getContext('2d');
-}
-
-function resetSnake() {
-  const cfg = SNAKE_LEVELS[snakeLevel];
-  snakeSpeed = cfg.speed;
-  snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
-  snakeDir = {x:1,y:0};
-  snakeNextDir = {x:1,y:0};
-  snakeScore = 0;
-  placeFood();
-  updateSnakeHUD();
-}
-
-function updateSnakeHUD() {
-  const scoreEl = document.getElementById('snake-score');
-  const levelEl = document.getElementById('snake-level-display');
-  if (scoreEl) scoreEl.textContent = 'Score: ' + snakeScore;
-  if (levelEl) levelEl.textContent = 'Уровень: ' + SNAKE_LEVELS[snakeLevel].name;
-}
-
-function placeFood() {
-  const maxX = snakeCanvas.width / snakeGrid;
-  const maxY = snakeCanvas.height / snakeGrid;
-  do {
-    snakeFood = {
-      x: Math.floor(Math.random() * maxX),
-      y: Math.floor(Math.random() * maxY)
-    };
-  } while (snake.some(s => s.x === snakeFood.x && s.y === snakeFood.y));
-}
-
-function drawSnake() {
-  snakeCtx.fillStyle = '#0a0a12';
-  snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-
-  // Subtle grid
-  snakeCtx.strokeStyle = 'rgba(168,85,247,0.02)';
-  snakeCtx.lineWidth = 1;
-  for (let i = 0; i <= snakeCanvas.width; i += snakeGrid) {
-    snakeCtx.beginPath(); snakeCtx.moveTo(i,0); snakeCtx.lineTo(i,snakeCanvas.height); snakeCtx.stroke();
-    snakeCtx.beginPath(); snakeCtx.moveTo(0,i); snakeCtx.lineTo(snakeCanvas.width,i); snakeCtx.stroke();
-  }
-
-  // Snake body
-  snake.forEach((seg, i) => {
-    const alpha = Math.max(0.3, 1 - (i / snake.length) * 0.7);
-    const isHead = i === 0;
-    snakeCtx.shadowBlur = isHead ? 18 : 0;
-    snakeCtx.shadowColor = isHead ? '#c084fc' : 'transparent';
-    snakeCtx.fillStyle = isHead ? '#c084fc' : `rgba(192,132,252,${alpha})`;
-    const pad = isHead ? 0 : 1;
-    snakeCtx.fillRect(
-      seg.x * snakeGrid + pad,
-      seg.y * snakeGrid + pad,
-      snakeSize - pad*2,
-      snakeSize - pad*2
-    );
-    snakeCtx.shadowBlur = 0;
-  });
-
-  // Food
-  const foodColor = SNAKE_LEVELS[snakeLevel].color;
-  snakeCtx.shadowBlur = 25;
-  snakeCtx.shadowColor = foodColor;
-  snakeCtx.fillStyle = foodColor;
-  snakeCtx.beginPath();
-  snakeCtx.arc(
-    snakeFood.x * snakeGrid + snakeGrid/2,
-    snakeFood.y * snakeGrid + snakeGrid/2,
-    snakeSize/2 - 3, 0, Math.PI * 2
-  );
-  snakeCtx.fill();
-  snakeCtx.shadowBlur = 0;
-}
-
-function updateSnake() {
-  snakeDir = {...snakeNextDir};
-  const head = {x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y};
-
-  const maxX = snakeCanvas.width / snakeGrid;
-  const maxY = snakeCanvas.height / snakeGrid;
-
-  // Wall collision
-  if (head.x < 0 || head.x >= maxX || head.y < 0 || head.y >= maxY) {
-    gameOverSnake();
-    return;
-  }
-  // Self collision
-  if (snake.some(s => s.x === head.x && s.y === head.y)) {
-    gameOverSnake();
-    return;
-  }
-
-  snake.unshift(head);
-
-  if (head.x === snakeFood.x && head.y === snakeFood.y) {
-    snakeScore += (snakeLevel === 'easy' ? 10 : snakeLevel === 'medium' ? 15 : 20);
-    updateSnakeHUD();
-    placeFood();
-  } else {
-    snake.pop();
-  }
-}
-
-function gameLoopSnake() {
-  if (snakePaused) return;
-  updateSnake();
-  drawSnake();
-}
-
-function gameOverSnake() {
-  snakeRunning = false;
-  clearInterval(snakeGame);
-  document.getElementById('snake-gameover').style.display = 'flex';
-  document.getElementById('snake-final-score').textContent = 'Score: ' + snakeScore;
-  document.getElementById('snake-final-level').textContent = 'Уровень: ' + SNAKE_LEVELS[snakeLevel].name;
-}
-
-function showLevelSelect() {
-  snakeRunning = false;
-  clearInterval(snakeGame);
-  document.getElementById('snake-level-select').style.display = 'flex';
-  document.getElementById('snake-gameover').style.display = 'none';
-  document.getElementById('snake-pause').style.display = 'none';
-  document.getElementById('snake-hud').style.display = 'none';
-}
-
-function startSnakeGame(level) {
-  snakeLevel = level || 'easy';
-  document.getElementById('snake-level-select').style.display = 'none';
-  document.getElementById('snake-gameover').style.display = 'none';
-  document.getElementById('snake-pause').style.display = 'none';
-  document.getElementById('snake-hud').style.display = 'flex';
-  resetSnake();
-  drawSnake();
-  snakeRunning = true;
-  snakePaused = false;
-  snakeGame = setInterval(gameLoopSnake, snakeSpeed);
-}
-
-function pauseSnake() {
-  if (!snakeRunning) return;
-  snakePaused = !snakePaused;
-  const pauseEl = document.getElementById('snake-pause');
-  if (snakePaused) {
-    pauseEl.style.display = 'flex';
-  } else {
-    pauseEl.style.display = 'none';
-  }
-}
-
-function resumeSnake() {
-  snakePaused = false;
-  document.getElementById('snake-pause').style.display = 'none';
-}
-
-function restartSnake() {
-  showLevelSelect();
-}
-
-function closeSnake() {
-  snakeRunning = false;
-  snakePaused = false;
-  clearInterval(snakeGame);
-  document.getElementById('snake-overlay').style.display = 'none';
-}
-
-function openSnake() {
-  const overlay = document.getElementById('snake-overlay');
-  if (!overlay) return;
-  overlay.style.display = 'flex';
-  if (!snakeCanvas) initSnake();
-  showLevelSelect();
-}
-
-// Keyboard controls
-let snakeKeyBuffer = '';
-document.addEventListener('keydown', (e) => {
-  // Secret word
-  if (!snakeRunning && e.key.length === 1) {
-    snakeKeyBuffer += e.key.toLowerCase();
-    if (snakeKeyBuffer.length > 10) snakeKeyBuffer = snakeKeyBuffer.slice(-10);
-    if (snakeKeyBuffer.includes('snake')) {
-      snakeKeyBuffer = '';
-      openSnake();
-    }
-  }
-
-  if (!snakeRunning) return;
-
-  // Pause
-  if (e.key === 'p' || e.key === 'P' || e.key === 'з' || e.key === 'З') {
-    e.preventDefault();
-    pauseSnake();
-    return;
-  }
-
-  // Exit
-  if (e.key === 'Escape') {
-    if (snakePaused) { resumeSnake(); return; }
-    closeSnake();
-    return;
-  }
-
-  if (snakePaused) return;
-
-  // Direction (prevent 180° turns)
-  switch(e.key) {
-    case 'ArrowUp': case 'w': case 'W': case 'ц': case 'Ц':
-      if (snakeDir.y !== 1) snakeNextDir = {x:0,y:-1};
-      break;
-    case 'ArrowDown': case 's': case 'S': case 'ы': case 'Ы':
-      if (snakeDir.y !== -1) snakeNextDir = {x:0,y:1};
-      break;
-    case 'ArrowLeft': case 'a': case 'A': case 'ф': case 'Ф':
-      if (snakeDir.x !== 1) snakeNextDir = {x:-1,y:0};
-      break;
-    case 'ArrowRight': case 'd': case 'D': case 'в': case 'В':
-      if (snakeDir.x !== -1) snakeNextDir = {x:1,y:0};
-      break;
-  }
-});
-
-// Logo easter egg
-let logoClicks = 0;
-setTimeout(() => {
-  const logo = document.querySelector('.brand-logo');
-  if (logo) {
-    logo.style.cursor = 'pointer';
-    logo.addEventListener('click', () => {
-      logoClicks++;
-      if (logoClicks >= 5) {
-        logoClicks = 0;
-        openSnake();
-      }
-    });
-  }
-}, 1000);
-
-console.log('%c🐍 Секретная игра активирована!', 'color:#c084fc; font-size:16px; font-weight:bold;');
-console.log('%cНаберите "snake" на клавиатуре или кликните логотип "ВБ" 5 раз', 'color:#94a3b8; font-size:12px;');
+</body>
+</html>
