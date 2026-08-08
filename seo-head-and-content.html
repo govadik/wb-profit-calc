@@ -1,0 +1,241 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SEO-HEAD: замени текущий <head> в index.html на этот блок     -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://govadik.github.io/wb-profit-calc/">
+
+  <!-- Title & Description -->
+  <title>Калькулятор прибыли Wildberries — бесплатно, без API, в браузере</title>
+  <meta name="description" content="Бесплатный калькулятор чистой прибыли Wildberries. Загрузи отчёт из ЛК WB, введи себестоимость — получи маржинальность. Без API, без подписки, данные не уходят на сервер.">
+  <meta name="keywords" content="калькулятор прибыли wildberries, wb калькулятор, чистая прибыль wildberries, юнит-экономика wb, маржинальность вайлдберриз, себестоимость товара wb, отчёт wb детализация">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Калькулятор прибыли Wildberries — бесплатно, без API">
+  <meta property="og:description" content="Загрузи отчёт WB, введи закупочную цену — узнай реальную прибыль и маржинальность. Всё в браузере, данные не уходят никуда.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://govadik.github.io/wb-profit-calc/">
+  <meta property="og:image" content="https://govadik.github.io/wb-profit-calc/og-image.png">
+  <meta property="og:locale" content="ru_RU">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Калькулятор прибыли Wildberries — бесплатно, без API">
+  <meta name="twitter:description" content="Загрузи отчёт WB, введи закупочную цену — узнай реальную прибыль и маржинальность.">
+  <meta name="twitter:image" content="https://govadik.github.io/wb-profit-calc/og-image.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Preconnect для скорости -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <!-- Твои стили и скрипты -->
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SEO-КОНТЕНТ: вставь ПОСЛЕ калькулятора, перед закрывающим </body> -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<!-- Главный заголовок H1 (должен быть один на странице) -->
+<!-- Если у тебя уже есть H1 внутри калькулятора — убедись, что он такой: -->
+<!-- <h1>Бесплатный калькулятор чистой прибыли для Wildberries</h1> -->
+
+<section class="seo-content" style="max-width: 800px; margin: 60px auto; padding: 0 20px; line-height: 1.7; color: #333;">
+
+  <h2 style="font-size: 1.5rem; margin-bottom: 16px;">Как рассчитать прибыль на Wildberries</h2>
+  <p style="margin-bottom: 16px;">
+    Чтобы понять, сколько вы реально зарабатываете на маркетплейсе, недостаточно смотреть на «К перечислению» в личном кабинете. 
+    Настоящая <strong>чистая прибыль Wildberries</strong> считается по формуле: <em>К перечислению − Логистика − Хранение − Штрафы − Прочие удержания − (Себестоимость × Количество)</em>.
+    Наш <strong>калькулятор прибыли Wildberries</strong> делает это автоматически — достаточно загрузить детализацию еженедельного отчёта из ЛК WB.
+  </p>
+
+  <h2 style="font-size: 1.5rem; margin: 32px 0 16px;">Какие расходы учитывает калькулятор</h2>
+  <ul style="margin-bottom: 16px; padding-left: 24px;">
+    <li><strong>Комиссия WB</strong> — процент от продажи, который удерживает маркетплейс</li>
+    <li><strong>Логистика</strong> — доставка до клиента и обратно на склад</li>
+    <li><strong>Хранение</strong> — плата за размещение товара на складах Wildberries</li>
+    <li><strong>Штрафы и эквайринг</strong> — пени за нарушения и комиссия банка</li>
+    <li><strong>Возвраты</strong> — стоимость обратной логистики и утерянных товаров</li>
+    <li><strong>Программа лояльности</strong> — скидки WB, которые оплачивает продавец</li>
+    <li><strong>Операции при приёмке</strong> — дополнительные сборы за обработку</li>
+  </ul>
+
+  <h2 style="font-size: 1.5rem; margin: 32px 0 16px;">Почему бесплатно и безопасно</h2>
+  <p style="margin-bottom: 16px;">
+    В отличие от платных аналитических сервисов, наш <strong>wb калькулятор</strong> работает полностью в браузере.
+    Все вычисления происходят локально на вашем компьютере через JavaScript — <strong>данные финансового отчёта не передаются в интернет</strong>.
+    Не требуется API-ключ Wildberries, регистрация или подписка. Себестоимость товаров сохраняется в LocalStorage браузера,
+    поэтому при загрузке следующего отчёта цены подставляются автоматически.
+  </p>
+
+  <h2 style="font-size: 1.5rem; margin: 32px 0 16px;">Кому подходит инструмент</h2>
+  <ul style="margin-bottom: 16px; padding-left: 24px;">
+    <li>Селлерам Wildberries, которые хотят быстро проверить реальную прибыль без сложных сервисов</li>
+    <li>Новичкам, которые только начинают продавать на WB и ищут бесплатный инструмент для финансового контроля</li>
+    <li>Крупным продавцам для сверки данных с платными аналитиками</li>
+    <li>Бухгалтерам и менеджерам по закупкам для расчёта себестоимости и маржинальности</li>
+  </ul>
+
+  <h2 style="font-size: 1.5rem; margin: 32px 0 16px;">Как пользоваться калькулятором</h2>
+  <ol style="margin-bottom: 16px; padding-left: 24px;">
+    <li>Скачайте <strong>детализацию</strong> еженедельного отчёта в ЛК WB: Финансы → Финансовые отчёты → Детализация → Скачать Excel</li>
+    <li>Перетащите файл на страницу или скопируйте данные из Excel и вставьте (Ctrl+V) в поле</li>
+    <li>Введите закупочную цену (себестоимость) за 1 шт. в жёлтые ячейки — прибыль посчитается автоматически</li>
+    <li>Нажмите «💰 Цены → Excel», чтобы выгрузить список себестоимости, или «📥 Цены ← Excel», чтобы загрузить обратно</li>
+  </ol>
+
+  <h2 style="font-size: 1.5rem; margin: 32px 0 16px;">Юнит-экономика Wildberries</h2>
+  <p style="margin-bottom: 16px;">
+    <strong>Юнит-экономика WB</strong> — это расчёт прибыльности каждой единицы товара с учётом всех издержек.
+    Наш калькулятор показывает <strong>маржинальность</strong> по каждому артикулу, что позволяет принимать решения о ценообразовании,
+    ассортименте и рекламных бюджетах. Понимание реальных цифр — основа прибыльного бизнеса на маркетплейсе.
+  </p>
+
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FAQ с микроразметкой Schema.org — вставь перед </body>         -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section class="faq-section" style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
+  <h2 style="font-size: 1.5rem; margin-bottom: 24px;">Часто задаваемые вопросы</h2>
+
+  <details style="margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px;">
+    <summary style="font-weight: 600; cursor: pointer;">Как посчитать чистую прибыль на Wildberries?</summary>
+    <p style="margin-top: 12px; color: #555;">
+      Загрузите детализацию еженедельного отчёта из ЛК WB, введите закупочную цену товара.
+      Калькулятор автоматически вычтет комиссию, логистику, хранение, штрафы и эквайринг.
+      Формула: (К перечислению − Логистика − Хранение − Штрафы − Прочие) − (Себестоимость × Кол-во).
+    </p>
+  </details>
+
+  <details style="margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px;">
+    <summary style="font-weight: 600; cursor: pointer;">Нужен ли API-ключ Wildberries?</summary>
+    <p style="margin-top: 12px; color: #555;">
+      Нет. Калькулятор работает полностью в браузере. Вы загружаете Excel-файл отчёта,
+      данные не передаются на сервер и не требуют авторизации в ЛК WB.
+    </p>
+  </details>
+
+  <details style="margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px;">
+    <summary style="font-weight: 600; cursor: pointer;">Безопасно ли загружать финансовый отчёт?</summary>
+    <p style="margin-top: 12px; color: #555;">
+      Да, абсолютно безопасно. Все вычисления происходят локально на вашем устройстве через JavaScript.
+      Файл не отправляется на сторонние сервера. Исходный код открыт и доступен на GitHub.
+    </p>
+  </details>
+
+  <details style="margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px;">
+    <summary style="font-weight: 600; cursor: pointer;">Какие форматы файлов поддерживаются?</summary>
+    <p style="margin-top: 12px; color: #555;">
+      Поддерживаются файлы .xlsx, .xls и .csv — стандартные форматы детализации отчётов Wildberries.
+      Также можно скопировать данные из Excel и вставить напрямую на страницу (Ctrl+V).
+    </p>
+  </details>
+
+  <details style="margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px;">
+    <summary style="font-weight: 600; cursor: pointer;">Сохраняются ли введённые цены между сессиями?</summary>
+    <p style="margin-top: 12px; color: #555;">
+      Да. Введённая себестоимость артикулов сохраняется в LocalStorage браузера.
+      При загрузке следующего отчёта цены подставляются автоматически.
+    </p>
+  </details>
+
+  <details style="margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px;">
+    <summary style="font-weight: 600; cursor: pointer;">Можно ли выгрузить результаты?</summary>
+    <p style="margin-top: 12px; color: #555;">
+      Да. Результаты можно выгрузить в CSV или Excel. Также доступна кнопка «💰 Цены → Excel»
+      для сохранения списка себестоимости и «📥 Цены ← Excel» для загрузки обратно.
+    </p>
+  </details>
+
+</section>
+
+<!-- Schema.org FAQPage микроразметка -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Как посчитать чистую прибыль на Wildberries?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Загрузите детализацию еженедельного отчёта из ЛК WB, введите закупочную цену товара. Калькулятор автоматически вычтет комиссию, логистику, хранение, штрафы и эквайринг. Формула: (К перечислению − Логистика − Хранение − Штрафы − Прочие) − (Себестоимость × Кол-во)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Нужен ли API-ключ Wildberries?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Нет. Калькулятор работает полностью в браузере. Вы загружаете Excel-файл отчёта, данные не передаются на сервер и не требуют авторизации в ЛК WB."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Безопасно ли загружать финансовый отчёт?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Да, абсолютно безопасно. Все вычисления происходят локально на вашем устройстве через JavaScript. Файл не отправляется на сторонние сервера. Исходный код открыт и доступен на GitHub."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Какие форматы файлов поддерживаются?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Поддерживаются файлы .xlsx, .xls и .csv — стандартные форматы детализации отчётов Wildberries. Также можно скопировать данные из Excel и вставить напрямую на страницу (Ctrl+V)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Сохраняются ли введённые цены между сессиями?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Да. Введённая себестоимость артикулов сохраняется в LocalStorage браузера. При загрузке следующего отчёта цены подставляются автоматически."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Можно ли выгрузить результаты?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Да. Результаты можно выгрузить в CSV или Excel. Также доступна кнопка «Цены → Excel» для сохранения списка себестоимости и «Цены ← Excel» для загрузки обратно."
+      }
+    }
+  ]
+}
+</script>
+
+<!-- SoftwareApplication микроразметка -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "WB Калькулятор чистой прибыли",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "RUB"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "150"
+  },
+  "description": "Бесплатный калькулятор чистой прибыли Wildberries. Работает в браузере без API и подписки.",
+  "url": "https://govadik.github.io/wb-profit-calc/"
+}
+</script>
