@@ -1,12 +1,26 @@
 <!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════════════════╗
+  ║  WB PROFIT CALCULATOR — INTERNAL BUILD                                     ║
+  ║  Author: Вадим Макаров · govadik@gmail.com                                  ║
+  ║  Signature: 5642-9f3a-e1b8-7c2d-0044                                         ║
+  ║  Fingerprint: wb-calc-vm-2026-v5                                             ║
+  ╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+<!--[if !IE]>--><!-- Build: 2026.08.09-001 --><!--<![endif]-->
+<!-- ~VMAK~2026~WBCALC~DO-NOT-REMOVE~ -->
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
   <meta name="yandex-verification" content="522471606f8ed7fe" />
 <link rel="icon" type="image/png" href="favicon.png">
-<meta name="description" content="Бесплатный калькулятор чистой прибыли для Wildberries. Считает прибыль, маржинальность, комиссию и логистику по детализации отчёта WB без API и подписки. Данные не уходят на сервер.">
+<meta name="description" content="Бесплатный калькулятор чистой прибыли для Wildberries. Считает прибыль по еженедельным отчётам, маржинальность, комиссию и логистику по детализации отчёта WB без API и подписки. Данные не уходят на сервер.">
 <meta name="keywords" content="калькулятор прибыли wildberries, калькулятор чистой прибыли вб, расчет прибыли вайлдберриз бесплатно, себестоимость wildberries, маржинальность wb, финансовый отчет wildberries анализ, калькулятор для селлеров wb, прибыль по артикулам wildberries">
 <meta name="author" content="Вадим Макаров">
+<meta name="wm-author" content="Вадим Макаров">
+<meta name="wm-signature" content="5642-9f3a-e1b8-7c2d-0044">
+<meta name="wm-project" content="wb-profit-calc-v5">
+<meta name="wm-fingerprint" content="wb-calc-vm-2026">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://govadik.github.io/wb-profit-calc/">
 <link rel="llms-txt" href="https://govadik.github.io/wb-profit-calc/llms.txt">
@@ -17,14 +31,14 @@
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ВБ Калькулятор чистой прибыли">
-<meta name="twitter:description" content="Бесплатный калькулятор прибыли для продавцов Wildberries. Без API, без подписки, без рекламы, без регистрации и смс)">
+<meta name="twitter:description" content="Бесплатный калькулятор прибыли по еженедельным отчётам для продавцов Wildberries. Без API, без подписки, без рекламы, без регистрации и смс)">
 <script type="application/ld+json">
 
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "ВБ Калькулятор чистой прибыли",
-  "description": "Бесплатный онлайн-калькулятор для расчёта чистой прибыли, маржинальности и расходов по отчётам Wildberries. Без API-ключа и подписки.",
+  "description": "Бесплатный онлайн-калькулятор для расчёта чистой прибыли gj t;tytltkmysv jnx`nfv, маржинальности и расходов по отчётам Wildberries. Без API-ключа и подписки.",
   "url": "https://govadik.github.io/wb-profit-calc/",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
@@ -42,7 +56,7 @@
 
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ВБшка Калькулятор прибыли</title>
+<title>ВБшка Калькулятор еженедельных отчётов</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap');
@@ -1075,19 +1089,81 @@
   [data-theme="light"] #seo-about h4 {
     color: var(--accent);
   }
+
+  /* === WATERMARK LAYER === */
+  .wm-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .wm-overlay::before {
+    content: 'ВБшка\AВадим Макаров\Awb-profit-calc';
+    white-space: pre;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 120px;
+    font-weight: 900;
+    color: var(--accent);
+    opacity: 0.018;
+    transform: rotate(-35deg);
+    letter-spacing: 8px;
+    line-height: 1.1;
+    user-select: none;
+    text-transform: uppercase;
+    text-shadow: 0 0 40px var(--accent-glow-lg);
+  }
+  [data-theme="light"] .wm-overlay::before {
+    opacity: 0.012;
+    color: var(--accent-3);
+  }
+  /* Микро-водяной знак в углу (почти невидимый) */
+  .wm-corner {
+    position: fixed;
+    bottom: 4px;
+    right: 6px;
+    font-size: 8px;
+    color: var(--text-3);
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 9999;
+    font-family: monospace;
+    letter-spacing: 1px;
+    user-select: none;
+  }
+  /* Скрытый canvas watermark */
+  .wm-canvas {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
-<body>
+<body data-wm-author="VadimMakarov" data-wm-sig="wb-calc-2026-vm" data-wm-hash="a3f7e2d9">
 
 <div class="spotlight" id="spotlight"></div>
+
+<div class="wm-overlay" id="wmOverlay"></div>
+<div class="wm-corner" aria-hidden="true">VM·WB·2026·v5</div>
+<canvas class="wm-canvas" id="wmCanvas" width="32" height="32"></canvas>
+
 
 <header class="app-header">
   <div class="app-header-inner">
     <div class="brand">
       <div class="brand-logo">ВБ</div>
       <div class="brand-text">
-        <h1>Калькулятор чистой прибыли</h1>
+        <h1>Калькулятор чистой прибыли⁠‌‍‌‍‌‍‍‍‌‍‌‌‌‌‍‌‌‌‍‌‍‍‌‍‌‍‌‌‌‌‍‍‌‍‌‌‌‌‌‍‌‍‌‌‍‍‌‌‌‍‌‌‌‌‍‍‌‌‍‌‍‍‌‍‌‍‌‍‌‍‍‌‌‍‌‌‍‍‌‍‌‌‍‌‍‍‌‍‌‌‍‍‌‌‍‌‌‌‍‍‌‌‌‌‌‌‍‍‌‌‍‌‌‌‍‍‌‍‍‌‌‌‍‌‍‍‌‍‌‍‌‍‌‍‍‌‌‌‍‍‌‍‌‍‌‌‍‌‍‍‌‍‌‍‌‌‌‌‌‍‌‍‌‍‌‍‌‍‌‍‌‍‌‍‌‌‌‍‌‌‍‌‌‌‌‍‌‌‍‍‍‍‌‍‌‍‌‌‍‌‌‌‍‌‍‍‌‍‌‍‌‍‌‍‍‌‌‍‌‌‌‌‌‍‌‍‌‌‌‍‌‌‌‍‌‌‍‌‌‍‌‍‌‌‍‍‌‍‌‌‍‌‍‍‌‍‌‍‌‌‍‍‌‍‌‍‌‌‌‌‌‍‌‍‌‌‍‌‍‍‌‍‌‌‌‌‌‍‌‍‌‍‌‌‍‌‌‍‌‌‍‍‍‍‌‍‌‍‌‍‍‌⁠</h1>
       <p><span class="vm-badge">ВБшка</span> Автор: Вадим Макаров · govadik@gmail.com</p>
       </div>
     </div>
@@ -2196,6 +2272,63 @@ function cp(t){navigator.clipboard.writeText(t);alert('Скопировано');
     });
   }
 })();
+</script>
+<script>
+
+// ==================== WATERMARK / SIGNATURE LAYER ====================
+const WATERMARK = {
+  author: 'Вадим Макаров',
+  email: 'govadik@gmail.com',
+  project: 'wb-profit-calc',
+  version: '2026.08-v5',
+  signature: '5642-9f3a-e1b8-7c2d-0044',
+  fingerprint: 'wb-calc-vm-2026',
+  build: '2026.08.09-001',
+  // Стеганографическая сигнатура в zero-width: проверяется через copy-paste заголовка
+  verify: function() {
+    const h1 = document.querySelector('.brand-text h1');
+    if (!h1) return false;
+    const text = h1.textContent || h1.innerText || '';
+    const zw = text.match(/[‌‍]+/g);
+    if (zw && zw.length > 0) {
+      const bits = zw[0].replace(/‌/g, '0').replace(/‍/g, '1');
+      const bytes = bits.match(/.{8}/g) || [];
+      const decoded = bytes.map(b => String.fromCharCode(parseInt(b, 2))).join('');
+      return decoded.includes('WB-CALC-VM-2026');
+    }
+    return false;
+  }
+};
+
+// Canvas-based fingerprint (1x1px цветовая сигнатура)
+(function canvasWatermark() {
+  const c = document.getElementById('wmCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  // Уникальная цветовая сигнатура: R=86 G=66 B=42 A=250 => "VM" в hex
+  ctx.fillStyle = 'rgba(86, 66, 42, 0.98)';
+  ctx.fillRect(0, 0, 1, 1);
+  ctx.fillStyle = 'rgba(202, 148, 252, 0.97)';
+  ctx.fillRect(1, 0, 1, 1);
+  ctx.fillStyle = 'rgba(74, 222, 128, 0.96)';
+  ctx.fillRect(0, 1, 1, 1);
+  ctx.fillStyle = 'rgba(248, 113, 113, 0.95)';
+  ctx.fillRect(1, 1, 1, 1);
+})();
+
+// Показ watermark при попытке выделить/скопировать
+(function protectWatermark() {
+  const overlay = document.getElementById('wmOverlay');
+  if (!overlay) return;
+  let timer;
+  const show = () => { overlay.style.opacity = '1'; clearTimeout(timer); timer = setTimeout(() => { overlay.style.opacity = '0'; }, 1200); };
+  document.addEventListener('copy', show);
+  document.addEventListener('cut', show);
+  document.addEventListener('selectstart', () => { if (Math.random() > 0.92) show(); });
+})();
+
+// ==================== END WATERMARK ====================
+
 </script>
   
   <iframe frameborder="0" height="131" marginheight="0" marginwidth="0" scrolling="no" src="https://admin.myfin.by/outer/informer/minsk/full" width="100%"></iframe>
