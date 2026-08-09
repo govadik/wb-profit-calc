@@ -1148,6 +1148,7 @@
 </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body data-wm-author="VadimMakarov" data-wm-sig="wb-calc-2026-vm" data-wm-hash="a3f7e2d9">
 
@@ -1171,6 +1172,7 @@
       <a href="https://govadik.github.io/wb-profit-calc/instruction.html" target="_blank" class="btn btn-secondary btn-sm">📘 Инструкция</a>
       <a href="https://t.me/wb_profit_calc" target="_blank" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0088cc, #005f8f);">📢 Telegram</a>
       <button class="btn btn-success btn-sm" onclick="toggleDonate()">💝 Отблагодарить</button>
+      <button class="btn btn-secondary btn-sm" onclick="saveCalcToDisk()" title="Сохранить калькулятор как HTML-файл">💾 Сохранить</button>
       <button class="theme-toggle" id="themeToggle" title="Переключить тему">☀️</button>
     </div>
   </div>
@@ -1193,7 +1195,7 @@
   <div class="status-msg status-warn" id="status-warn"></div>
   <div class="status-msg status-err" id="status-err"></div>
 
-  <div class="formula-bar show ok" id="formula-bar">Формула прибыли: (К перечислению − Логистика − Хранение − Штрафы − Прочие удержания) − (Себестоимость × Кол-во). «Прочие удержания» включают операции при приёмке, программу лояльности и корректировки ВВ.</div>
+  <div class="formula-bar show ok" id="formula-bar">Формула прибыли: (К перечислению − Логистика − Хранение − Штрафы − Прочие удержания) − (Себестоимость × Кол-во). «Прочие удержания» включают операции при приёмке, программу лояльности, удержанные баллы, корректировки ВВ и разовые изменения срока перечисления.</div>
 
   <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
     <span class="icon">📁</span>
@@ -1497,6 +1499,10 @@ const COLUMN_MAP = {
     keys: ['разовое изменение срока перечисления денежных средств', 'разовое изменение срока перечисления'],
     required: false
   },
+  loyaltyCompensation: {
+    keys: ['компенсация скидки по программе лояльности', 'компенсацияскидки', 'компенсация скидки', 'loyalty_compensation', 'cashback_compensation', 'компенсация кешбэка'],
+    required: false
+  },
   toPay: {
     keys: ['к перечислению', 'кперечислению', 'ppvzforpay', 'к_перечислению', 'итого к оплате', 'к перечислению продавцу', 'к перечислению продавцу за реализованный товар', 'к перечислению, ₽'],
     required: false
@@ -1693,12 +1699,13 @@ function parseData(data) {
     // программе лояльности, удержанные баллы — minus corrective additions
     // (корректировка ВВ, разовое изменение срока перечисления), which give money
     // back rather than take it away.
+    const loyaltyCompensation = num(getVal(row, idx.loyaltyCompensation)) * sign;
     const otherPayments = (
       num(getVal(row, idx.otherPayments)) +
       num(getVal(row, idx.acceptance)) +
       num(getVal(row, idx.loyaltyParticipation)) +
-      num(getVal(row, idx.loyaltyPoints)) -
-      num(getVal(row, idx.wbAdjustment)) -
+      num(getVal(row, idx.loyaltyPoints)) +
+      num(getVal(row, idx.wbAdjustment)) +
       num(getVal(row, idx.oneTimeAdjustment))
     ) * sign;
 
@@ -1751,9 +1758,9 @@ function parseData(data) {
 
   if (useAltFormula) {
     msg += ' ⚠️ Колонка «К перечислению» не найдена. Прибыль считается как: Выручка − Комиссия − Логистика − Хранение − Штрафы − Эквайринг − Прочие удержания − (Себестоимость × Кол-во).';
-    showFormulaBar('warn', 'Формула прибыли: Выручка − Комиссия − Логистика − Хранение − Штрафы − Эквайринг − Прочие удержания − (Себестоимость × Кол-во) (колонка «К перечислению» не найдена в файле)');
+    showFormulaBar('warn', 'Формула прибыли: Выручка − Комиссия − Логистика − Хранение − Штрафы − Эквайринг − Прочие удержания − (Себестоимость × Кол-во) (колонка «К перечислению» не найдена). Прочие удержания включают приёмку, лояльность, корректировки ВВ и разовые удержания.');
   } else {
-    showFormulaBar('ok', 'Формула прибыли: (К перечислению − Логистика − Хранение − Штрафы − Прочие удержания) − (Себестоимость × Кол-во). «Прочие удержания» включают операции при приёмке, программу лояльности и корректировки ВВ.');
+    showFormulaBar('ok', 'Формула прибыли: (К перечислению − Логистика − Хранение − Штрафы − Прочие удержания) − (Себестоимость × Кол-во). «Прочие удержания» включают операции при приёмке, программу лояльности, удержанные баллы, корректировки ВВ и разовые изменения срока перечисления.');
   }
 
   showStatus('ok', msg);
@@ -1960,7 +1967,7 @@ function loadDemo() {
   ];
   useAltFormula = false;
   nextId = 4; save(); render();
-  showFormulaBar('ok', 'Формула прибыли: (К перечислению − Логистика − Хранение − Штрафы − Эквайринг) − (Себестоимость × Кол-во)');
+  showFormulaBar('ok', 'Формула прибыли: (К перечислению − Логистика − Хранение − Штрафы − Прочие удержания) − (Себестоимость × Кол-во). «Прочие удержания» включают операции при приёмке, программу лояльности, удержанные баллы, корректировки ВВ и разовые изменения срока перечисления.');
   showStatus('ok', 'Демо-данные загружены. Попробуйте ввести себестоимость в жёлтые ячейки.');
 }
 
@@ -2241,6 +2248,19 @@ init();
 
 function toggleDonate(){let m=document.getElementById('donateModal');m.style.display=m.style.display==='flex'?'none':'flex';}
 function cp(t){navigator.clipboard.writeText(t);alert('Скопировано');}
+
+function saveCalcToDisk() {
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'wb-profit-calc.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 </script>
 
