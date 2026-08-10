@@ -1169,7 +1169,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <a href="https://govadik.github.io/wb-profit-calc/instruction.html" target="_blank" class="btn btn-secondary btn-sm">📘 Инструкция</a>
+      <a href="instruction.html" class="btn btn-secondary btn-sm">📘 Инструкция</a>
       <a href="https://t.me/wb_profit_calc" target="_blank" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0088cc, #005f8f);">📢 Telegram</a>
       <button class="btn btn-success btn-sm" onclick="toggleDonate()">💝 Отблагодарить</button>
       <button class="btn btn-secondary btn-sm" onclick="saveCalcToDisk()" title="Сохранить калькулятор как HTML-файл">💾 Сохранить</button>
@@ -1188,7 +1188,7 @@
       <li>В жёлтые ячейки введите закупочную цену за 1 шт. — прибыль посчитается автоматически</li>
       <li>Кнопка «💰 Цены → Excel» выгружает список себестоимости, «📥 Цены ← Excel» — загружает такой файл обратно</li>
     </ol>
-    <p style="margin-top:10px;"><a href="https://govadik.github.io/wb-profit-calc/instruction.html" target="_blank">📘 Подробная инструкция по использованию →</a></p>
+    <p style="margin-top:10px;"><a href="instruction.html">📘 Подробная инструкция по использованию →</a></p>
   </div>
 
   <div class="status-msg status-ok show" id="status-ok">✅ Загружено 0 артикулов. Загрузите отчёт WB или нажмите «Демо».</div>
@@ -1823,6 +1823,7 @@ function render() {
       const cost = Number(r.cost) || 0;
 
       const costTotal = cost * qty;
+      // Построчная рентабельность = Прибыль / Себестоимость (cost × qty) × 100
       const expenses = commission + logistics + storage + penalty + acquiring;
 
       let profit;
@@ -1894,6 +1895,7 @@ function computeTotals() {
     profit = netToPay - t.cost;
   }
 
+  // Итоговая рентабельность = Общая прибыль / Общая себестоимость × 100
   const margin = t.cost > 0 ? (profit / t.cost * 100) : 0;
   return { ...t, expenses, profit, margin, netToPay };
 }
